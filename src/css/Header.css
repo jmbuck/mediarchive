@@ -1,0 +1,18 @@
+.Header {
+    background-color: #277455;
+    padding: 0.5rem;
+}
+
+.Header .btn-toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.Header .search-bar {
+    flex-basis: 60%;
+}
+
+.Header .misc-buttons {
+    margin-left: 0.5rem;
+}
