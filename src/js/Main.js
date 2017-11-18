@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import './Main.css'
+import '../css/Main.css'
 import Header from './Header'
 import Footer from './Footer'
 

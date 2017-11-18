@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom'
 
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import './css/index.css';
+import App from './js/App';
+import registerServiceWorker from './js/registerServiceWorker';
 
 ReactDOM.render(
 <Router>

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
 import Main from './Main'
-import './App.css'
+import '../css/App.css'
 
 class App extends Component {
   
