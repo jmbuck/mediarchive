@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
+
 import './Main.css'
+import Header from './Header'
+import Footer from './Footer'
 
 class Main extends Component {
   render() {
     return (
       <div className="Main">
-        Let there be life
+        <Header />
+        {/* List statistics and links go here on the main page */}
+        <Footer />
       </div>
     );
   }

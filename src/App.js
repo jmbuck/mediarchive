@@ -13,11 +13,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Route path="/" render={() =>
-            this.signedIn() 
-            ? <Main />
-            : <Redirect to="/sign-in" />
-          }/>
+        <Switch>
+          <Route path="/" render={() =>
+              this.signedIn() 
+              ? <Main />
+              : <Redirect to="/sign-in" />
+            }/>
+        </Switch>
       </div>
     );
   }
