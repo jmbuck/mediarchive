@@ -1,0 +1,1 @@
+export const movieKey = "YOUR TMDB API KEY HERE"
