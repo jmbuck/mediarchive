@@ -53,6 +53,24 @@ class Search extends Component {
 
   fetchShows = (query, page) => {
     console.log('Fetching shows '+query)
+    if(query) {
+      fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDBKey}&query=${query}&page=${page}`)
+          .then(response => {
+              if(response.status === 422) {
+                  this.props.history.push(`/search/${this.props.match.params.media}/${this.props.match.params.query}/1`)
+                  return
+              }
+              return response.json()})
+          .then(shows => {
+              if(!shows) return
+              this.setState({ results: shows.results, page, totalPages: shows.total_pages, fetched: true }, () => {
+                  if(page > shows.total_pages) {
+                      this.props.history.push(`/search/${this.props.match.params.media}/${this.props.match.params.query}/1`)
+                  }
+              })
+          }
+      )
+    }
   }
 
   fetchMovies = (query, page) => {
@@ -77,17 +95,27 @@ class Search extends Component {
     }
   }
 
+  renderResults = (media) => {
+    if(media === 'movies') {
+      return this.state.results && this.state.results.length > 0
+      ? <ul>{this.state.results.map((result, i) => <li>{result.title}</li>)}</ul>
+      : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
+    } else if(media === 'tv') {
+      return this.state.results && this.state.results.length > 0
+      ? <ul>{this.state.results.map((result, i) => <li>{result.name}</li>)}</ul>
+      : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
+    } else if(media === 'books') {
+      return <div>Search for books</div>
+    }
+  }
+
   render() {
     const query = this.props.match.params.query
     const media = this.props.match.params.media
 
     return (
       <div className="Search">
-        {
-          this.state.results && this.state.results.length > 0
-            ? <ul>{this.state.results.map((result, i) => <li>{result.title}</li>)}</ul>
-            : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
-        }
+        {this.renderResults(media)}
       </div>
     );
   }
