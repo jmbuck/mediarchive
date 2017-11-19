@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 import '../css/Search.css'
 import { TMDBKey, booksKey } from '../keys'
@@ -132,10 +133,31 @@ class Search extends Component {
 
   render() {
     const media = this.props.match.params.media
+    const query = this.props.match.params.query
+    const page = this.props.match.params.page
 
     return (
       <div className="Search">
         {this.renderResults(media)}
+        <div className="page">
+          {(() => {
+            if(page > 1) {
+              return (
+                <Link to={`/search/${media}/${query}/${parseInt(page, 10)-1}`}>
+                    <button className="btn btn-primary" type="button"><i className="fa fa-arrow-left"></i></button>
+                </Link>
+              )
+          }})()}
+          {(() => {  
+            if(page < this.state.totalPages) {
+              return (
+                <Link to={`/search/${media}/${query}/${parseInt(page, 10)+1}`}>
+                    <button className="btn btn-primary" type="button"><i className="fa fa-arrow-right"></i></button>
+                </Link>
+              )
+          }})()}
+          <span className="page-number">Page {page} of {this.state.totalPages}</span>
+        </div>
       </div>
     );
   }
