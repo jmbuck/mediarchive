@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import '../css/Search.css'
-import { TMDBKey } from '../keys'
+import { TMDBKey, booksKey } from '../keys'
 
 
 class Search extends Component {
@@ -29,30 +29,50 @@ class Search extends Component {
     const oldMedia = this.props.match.params.media
     const oldPage = this.props.match.params.page
 
-    if(oldQuery !== query || oldPage !== page || oldMedia !== media) {
+    if(oldQuery !== query || oldPage !== page || oldMedia !== media) { 
+      this.setState({results: [], fetched: false}, () => {
         this.fetchMedia(query, media, page)
+      })  
     }
   }
 
   fetchMedia = (query, media, page) => {
-    if(media === 'books') {
-      this.fetchBooks(query, page);
-    } else if(media === 'tv') {
-      this.fetchShows(query, page);
-    } else if(media === 'movies') {
-      this.fetchMovies(query, page);
+    if(isNaN(page)) {
+      this.props.history.push(`/search/${media}/${query}/1`)
     } else {
-      console.log('Invalid media, searching movies')
-      this.props.history.push(`/search/movies/${query}/${page}`)
+      if(media === 'books') {
+        this.fetchBooks(query, page);
+      } else if(media === 'tv') {
+        this.fetchShows(query, page);
+      } else if(media === 'movies') {
+        this.fetchMovies(query, page);
+      } else {
+        this.props.history.push(`/search/movies/${query}/${page}`)
+      } 
     }
   }
 
   fetchBooks = (query, page) => {
-    console.log('Fetching books '+query)
+    page = parseInt(page, 10);
+    if(query) {
+      fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${20*(page-1)}&maxResults=20&country=US&key=${booksKey}`)
+        .then(response => {
+          return response.json()
+        })
+        .then(books => {
+          if(books.error && page !== 1) {
+            if(page !== 1) {
+              this.props.history.push(`/search/${this.props.match.params.media}/${this.props.match.params.query}/1`)
+            }
+            return
+          } 
+    
+          this.setState({ results: books.items, page, totalPages: Math.ceil(books.totalItems/20.0), fetched: true})
+        })
+    }
   }
 
   fetchShows = (query, page) => {
-    console.log('Fetching shows '+query)
     if(query) {
       fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDBKey}&query=${query}&page=${page}`)
           .then(response => {
@@ -74,7 +94,6 @@ class Search extends Component {
   }
 
   fetchMovies = (query, page) => {
-    console.log('Fetching movies '+query)
     if(query) {
       fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDBKey}&query=${query}&page=${page}`)
           .then(response => {
@@ -98,19 +117,20 @@ class Search extends Component {
   renderResults = (media) => {
     if(media === 'movies') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => <li>{result.title}</li>)}</ul>
+      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.title}</li>)}</ul>
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'tv') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => <li>{result.name}</li>)}</ul>
+      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.name}</li>)}</ul>
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'books') {
-      return <div>Search for books</div>
+      return this.state.results && this.state.results.length > 0
+      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.volumeInfo.title}</li>)}</ul>
+      : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     }
   }
 
   render() {
-    const query = this.props.match.params.query
     const media = this.props.match.params.media
 
     return (

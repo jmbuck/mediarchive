@@ -9,7 +9,7 @@ class List extends Component {
 
     return (
       <div className="List">
-          This is the {media} list!
+          This is the {media} list {list}!
       </div>
     );
   }
