@@ -9,6 +9,9 @@
     justify-content: space-between;
 }
 
+.Header a {
+    margin: 0.25rem;
+}
 .Header .search-bar {
     flex-basis: 60%;
 }

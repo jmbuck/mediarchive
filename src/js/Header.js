@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { NavLink } from 'react-router-dom'
+
 import '../css/Header.css'
 
 class Header extends Component {
@@ -7,9 +9,15 @@ class Header extends Component {
       <div className="Header">
         <div className="btn-toolbar" role="toolbar" aria-label="toolbar with lists">
           <div className="nav btn-group mr-2" role="group" aria-label="list links">
-            <button type="button" className="btn btn-primary">Movies</button>
-            <button type="button" className="btn btn-primary">TV Shows</button>
-            <button type="button" className="btn btn-primary">Books</button>
+            <NavLink to="/movies/all" className="">
+              <button type="button" className="btn btn-primary">Movies</button>
+            </NavLink>
+            <NavLink to="/tv/all" className="">
+              <button type="button" className="btn btn-primary">TV Shows</button>
+            </NavLink>
+            <NavLink to="/books/all" className="">
+              <button type="button" className="btn btn-primary">Books</button>
+            </NavLink>
           </div>
           <div className="search-bar input-group">
             <select className="input-group-addon" id="btnGroupAddon">
