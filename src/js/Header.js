@@ -4,6 +4,13 @@ import { NavLink } from 'react-router-dom'
 import '../css/Header.css'
 
 class Header extends Component {
+
+  handleSubmit = (ev) => {
+    ev.preventDefault()
+    this.props.history.push(`/search/${ev.target.media.value}/${ev.target.query.value}/1`)
+    ev.target.query.value = "";
+  }
+
   render() {
     return (
       <div className="Header">
@@ -19,14 +26,14 @@ class Header extends Component {
               <button type="button" className="btn btn-primary">Books</button>
             </NavLink>
           </div>
-          <div className="search-bar input-group">
-            <select className="input-group-addon" id="btnGroupAddon">
+          <form className="search-bar input-group" onSubmit={this.handleSubmit}>
+            <select name="media" className="input-group-addon media-dropdown" id="btnGroupAddon">
               <option value="movies">Movies</option>
               <option value="tv">TV Shows</option>
               <option value="books">Books</option>
             </select>
-            <input type="text" className="form-control" placeholder="Find media" aria-describedby="btnGroupAddon" />
-          </div>
+            <input type="text" name="query" className="form-control" placeholder="Find media" aria-describedby="btnGroupAddon" />
+          </form>
           <div className="misc-buttons btn-group" role="group" aria-label="sign out">
             <button type="button" className="btn btn-secondary">Statistics</button>
             <button type="button" className="btn btn-secondary">Sign out</button>

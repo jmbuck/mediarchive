@@ -16,7 +16,7 @@ class App extends Component {
         <Switch>
           <Route path="/" render={() =>
               this.signedIn() 
-              ? <Main />
+              ? <Main {...this.props} />
               : <Redirect to="/sign-in" />
             }/>
         </Switch>
