@@ -7,7 +7,7 @@ class Header extends Component {
 
   handleSubmit = (ev) => {
     ev.preventDefault()
-    this.props.history.push(`/search/${ev.target.media.value}/${ev.target.query.value}/1`)
+    this.props.history.push(`/search/${ev.target.media.value}/${encodeURI(ev.target.query.value)}/1`)
     ev.target.query.value = "";
   }
 

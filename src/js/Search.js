@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 
 import '../css/Search.css'
 import { TMDBKey, booksKey } from '../keys'
+import Show from './Show'
+import Movie from './Movie'
+import Book from './Book'
 
 
 class Search extends Component {
@@ -15,18 +18,18 @@ class Search extends Component {
   }
 
   componentWillMount() {
-    const query = this.props.match.params.query
+    const query = encodeURI(this.props.match.params.query)
     const media = this.props.match.params.media
     const page = this.props.match.params.page
     this.fetchMedia(query, media, page)
   }
 
   componentWillReceiveProps(nextProps) {
-    const query = nextProps.match.params.query
+    const query = encodeURI(nextProps.match.params.query)
     const media = nextProps.match.params.media
     const page = nextProps.match.params.page
 
-    const oldQuery = this.props.match.params.query
+    const oldQuery = encodeURI(this.props.match.params.query)
     const oldMedia = this.props.match.params.media
     const oldPage = this.props.match.params.page
 
@@ -118,15 +121,36 @@ class Search extends Component {
   renderResults = (media) => {
     if(media === 'movies') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.title}</li>)}</ul>
+      ? <ul>{this.state.results.map((result, i) => 
+          <Movie 
+            key={i}
+            index={i}
+            movie={result}
+            {...this.props}
+          />)}
+        </ul>
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'tv') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.name}</li>)}</ul>
+      ? <ul>{this.state.results.map((result, i) => 
+          <Show 
+            key={i}
+            index={i}
+            show={result}
+            {...this.props}
+          />)}
+        </ul>
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'books') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => <li key={i}>{result.volumeInfo.title}</li>)}</ul>
+      ? <ul>{this.state.results.map((result, i) =>
+          <Book 
+            key={i}
+            index={i}
+            book={result}
+            {...this.props}
+          />)}
+        </ul>
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     }
   }
