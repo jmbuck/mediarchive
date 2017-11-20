@@ -126,6 +126,7 @@ class Search extends Component {
             key={i}
             index={i}
             movie={result}
+            search={true}
             {...this.props}
           />)}
         </ul>
@@ -137,6 +138,7 @@ class Search extends Component {
             key={i}
             index={i}
             show={result}
+            search={true}
             {...this.props}
           />)}
         </ul>
@@ -148,6 +150,7 @@ class Search extends Component {
             key={i}
             index={i}
             book={result}
+            search={true}
             {...this.props}
           />)}
         </ul>

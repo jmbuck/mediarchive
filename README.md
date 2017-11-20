@@ -3,7 +3,7 @@
 ## About
 Mediarchive is an app created by Jordan Buckmaster and Shawn Montgomery for the Fall 2017 CS 252 class at Purdue University. Mediarchive provides users with an easy and intuitive way to keep track of all the media they've seen or read; books, movies, and TV shows can all be tracked. 
 
-Mediarchive utilizes React and React Router for the client side and Java and Spring for the server-side. We use the [Google Books](https://developers.google.com/books/) and [TMDB](https://www.themoviedb.org/documentation/api/) APIs to retrieve the data and 
+Mediarchive utilizes React for the client-side and Java and Spring for the server-side. We use the [Google Books](https://developers.google.com/books/) and [TMDB](https://www.themoviedb.org/documentation/api/) APIs to retrieve the data and 
 [Firebase](https://firebase.google.com/) to store the data and authenticate users.
 
 The client-side code and some of the CSS was done by Jordan Buckmaster and the server-side code and most of the CSS was done by Shawn Montgomery.
