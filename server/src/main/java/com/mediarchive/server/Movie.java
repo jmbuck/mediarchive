@@ -1,13 +1,16 @@
 package com.mediarchive.server;
 
-public class Movie extends Media {
-    private long epoch;
+import javax.persistence.Entity;
 
-    public void setDate(long epoch) {
-            this.epoch = epoch;
+@Entity
+public class Movie extends Media {
+
+    public Movie(String id) {
+        setId(id);
     }
 
-    public long getDate() {
-            return epoch;
+    public void setFinishedEpoch(int epoch) {
+        super.setFinishedEpoch(epoch);
+        setStartEpoch(epoch);
     }
 }

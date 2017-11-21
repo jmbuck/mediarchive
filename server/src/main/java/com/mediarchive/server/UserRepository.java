@@ -6,9 +6,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "media", path = "media")
-public interface MediaRepository extends PagingAndSortingRepository<Media, Long> {
+@RepositoryRestResource(collectionResourceRel = "user", path = "user")
+public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
-    List<Media> findByName(@Param("name") String name);
+    List<User> findByName(@Param("name") String name);
 
+    List<User> findAll();
 }

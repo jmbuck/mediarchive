@@ -1,27 +1,46 @@
 package com.mediarchive.server;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-public class Media {
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+public abstract class Media {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String id;
+    private long startEpoch;
+    private long finishedEpoch;
+    private int rating;
 
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public long getStartEpoch() {
+        return startEpoch;
+    }
+
+    public void setStartEpoch(long startEpoch) {
+        this.startEpoch = startEpoch;
+    }
+
+    public long getFinishedEpoch() {
+        return finishedEpoch;
+    }
+
+    public void setFinishedEpoch(long finishedEpoch) {
+        this.finishedEpoch = finishedEpoch;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
