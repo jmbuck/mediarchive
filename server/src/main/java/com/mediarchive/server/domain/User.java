@@ -16,11 +16,23 @@ public class User implements Serializable {
     @OneToOne(optional = false)
     private MediaList mediaList;
 
+    @Column(nullable = false, name = "LIST_INDEX")
+    private int index;
+
     @Column(nullable = false, name = "NAME")
     private String name;
 
     @JsonIgnore
     private String password;
+
+    protected User() {
+    }
+
+    public User(String name, String password, int index) {
+        this.name = name;
+        this.password = password;
+        this.index = index;
+    }
 
     public String getName() {
         return name;

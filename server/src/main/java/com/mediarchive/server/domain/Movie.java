@@ -14,6 +14,9 @@ public class Movie implements Serializable {
     @ManyToOne(optional = false)
     private MediaList mediaList;
 
+    @Column(nullable = false, name = "LIST_INDEX")
+    private int index;
+
     @Column(name = "ID")
     private String id;
 
@@ -26,8 +29,16 @@ public class Movie implements Serializable {
     @Column(name = "TITLE")
     private String title;
 
-    public Movie(String id) {
+    protected Movie() {
+    }
 
+    public Movie(MediaList mediaList, int index, MediaDetails details) {
+        this.mediaList = mediaList;
+        this.index = index;
+        this.id = details.getId();
+        this.finishedEpoch = details.getFinishedEpoch();
+        this.rating = details.getRating();
+        this.title = details.getTitle();
     }
 
     public String getId() {

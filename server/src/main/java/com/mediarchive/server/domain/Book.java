@@ -14,6 +14,9 @@ public class Book implements Serializable {
     @ManyToOne(optional = false)
     private MediaList mediaList;
 
+    @Column(nullable = false, name = "LIST_INDEX")
+    private int index;
+
     @Column(name = "ID")
     private String id;
 
@@ -32,8 +35,18 @@ public class Book implements Serializable {
     @Column(name = "CURRENT_PAGE")
     private int currentPage;
 
-    public Book(String id) {
+    protected Book() {
+    }
 
+    public Book(MediaList mediaList, int index, MediaDetails details) {
+        this.mediaList = mediaList;
+        this.index = index;
+        this.id = details.getId();
+        this.startEpoch = details.getStartEpoch();
+        this.finishedEpoch = details.getFinishedEpoch();
+        this.rating = details.getRating();
+        this.title = details.getTitle();
+        this.currentPage = details.getCurrent();
     }
 
     public String getId() {
