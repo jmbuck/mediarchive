@@ -9,12 +9,12 @@ Mediarchive utilizes React for the client-side and Spring for the server-side. W
 The client-side code and some of the CSS was done by Jordan Buckmaster and the server-side code and most of the CSS was done by Shawn Montgomery.
 
 ## Setup and Installation
-###Client
+### Client
 1. Clone this repository onto your computer
 2. Run `npm install` in the project directory
 3. Register the app with the TMDB, Firebase, and Google Books APIs
 4. Add the pertinent API information to `keys.example.js` and rename the file to `keys.js`
-###Server
+### Server
 1. Create environment on AWS Elastic Beanstalk for Java and MySQL persistence
 2. Clone this repository onto your computer
 3. Update `application.properties` with new MySQL endpoint and security
