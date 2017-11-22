@@ -4,20 +4,20 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class Show implements Serializable {
+public class Series implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "MEDIA_SID")
     private Long sid;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MediaList mediaList;
 
     @Column(nullable = false, name = "LIST_INDEX")
     private int index;
 
-    @Column(name = "ID")
+    @Column(name = "API_ID")
     private String id;
 
     @Column(name = "DATE_STARTED")
@@ -35,10 +35,10 @@ public class Show implements Serializable {
     @Column(name = "CURRENT_EPISODE")
     private int currentEpisode;
 
-    protected Show() {
+    protected Series() {
     }
 
-    public Show(MediaList mediaList, int index, MediaDetails details) {
+    public Series(MediaList mediaList, int index, MediaDetails details) {
         this.mediaList = mediaList;
         this.index = index;
         this.id = details.getId();

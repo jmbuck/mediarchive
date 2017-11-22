@@ -3,7 +3,6 @@ package com.mediarchive.server.domain;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class MediaList implements Serializable {
@@ -13,16 +12,16 @@ public class MediaList implements Serializable {
     @Column(name = "LIST_ID")
     private Long list_id;
 
-    @OneToOne(optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaList")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Movie> movies;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaList")
-    private List<Show> shows;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Series> series;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaList")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Book> books;
 
 

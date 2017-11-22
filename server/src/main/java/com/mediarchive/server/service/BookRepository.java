@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface BookRepository extends CrudRepository<Book, Long> {
     Page<Book> findByMediaList(MediaList mediaList, Pageable pageable);
     Book findByMediaListAndIndex(MediaList mediaList, int index);
-    Book save(Book movie);
+    Book save(Book book);
 }

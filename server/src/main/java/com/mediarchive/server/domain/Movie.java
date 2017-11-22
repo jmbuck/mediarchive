@@ -11,13 +11,13 @@ public class Movie implements Serializable {
     @Column(name = "MEDIA_SID")
     private Long sid;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MediaList mediaList;
 
     @Column(nullable = false, name = "LIST_INDEX")
     private int index;
 
-    @Column(name = "ID")
+    @Column(name = "API_ID")
     private String id;
 
     @Column(name = "DATE_FINISHED")

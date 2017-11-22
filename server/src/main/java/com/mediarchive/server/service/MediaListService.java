@@ -9,7 +9,7 @@ public interface MediaListService {
 
     Page<Movie> getMovies(MediaList mediaList, Pageable pageable);
 
-    Page<Show> getShows(MediaList mediaList, Pageable pageable);
+    Page<Series> getShows(MediaList mediaList, Pageable pageable);
 
     Page<Book> getBooks(MediaList mediaList, Pageable pageable);
 
@@ -19,11 +19,11 @@ public interface MediaListService {
 
     Movie removeMovie(MediaList mediaList, int index);
 
-    Show getShow(MediaList mediaList, int index);
+    Series getShow(MediaList mediaList, int index);
 
-    Show addShow(MediaList mediaList, MediaDetails details);
+    Series addShow(MediaList mediaList, MediaDetails details);
 
-    Show removeShow(MediaList mediaList, int index);
+    Series removeShow(MediaList mediaList, int index);
 
     Book getBook(MediaList mediaList, int index);
 

@@ -1,6 +1,7 @@
 package com.mediarchive.server.service;
 
 import com.mediarchive.server.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -10,18 +11,19 @@ import javax.transaction.Transactional;
 @Component("mediaListService")
 @Transactional
 public class MediaListServiceImpl implements MediaListService {
+
     private final MediaListRepository mediaListRepository;
     private final MovieRepository movieRepository;
-    private final ShowRepository showRepository;
+    private final SeriesRepository seriesRepository;
     private final BookRepository bookRepository;
 
     public MediaListServiceImpl(MediaListRepository mediaListRepository,
                                 MovieRepository movieRepository,
-                                ShowRepository showRepository,
+                                SeriesRepository seriesRepository,
                                 BookRepository bookRepository) {
         this.mediaListRepository = mediaListRepository;
         this.movieRepository = movieRepository;
-        this.showRepository = showRepository;
+        this.seriesRepository = seriesRepository;
         this.bookRepository = bookRepository;
     }
 
@@ -36,8 +38,8 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public Page<Show> getShows(MediaList mediaList, Pageable pageable) {
-        return this.showRepository.findByMediaList(mediaList, pageable);
+    public Page<Series> getShows(MediaList mediaList, Pageable pageable) {
+        return this.seriesRepository.findByMediaList(mediaList, pageable);
     }
 
     @Override
@@ -64,21 +66,21 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public Show getShow(MediaList mediaList, int index) {
-        return this.showRepository.findByMediaListAndIndex(mediaList, index);
+    public Series getShow(MediaList mediaList, int index) {
+        return this.seriesRepository.findByMediaListAndIndex(mediaList, index);
     }
 
     @Override
-    public Show addShow(MediaList mediaList, MediaDetails details) {
-        Show show = new Show(mediaList, 1, details);
-        return this.showRepository.save(show);
+    public Series addShow(MediaList mediaList, MediaDetails details) {
+        Series series = new Series(mediaList, 1, details);
+        return this.seriesRepository.save(series);
     }
 
     @Override
-    public Show removeShow(MediaList mediaList, int index) {
-        Show show = getShow(mediaList, index);
-        this.showRepository.delete(show);
-        return show;
+    public Series removeShow(MediaList mediaList, int index) {
+        Series series = getShow(mediaList, index);
+        this.seriesRepository.delete(series);
+        return series;
     }
 
     @Override

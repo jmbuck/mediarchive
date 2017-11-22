@@ -1,6 +1,7 @@
 package com.mediarchive.server.web;
 
 import com.mediarchive.server.domain.User;
+import com.mediarchive.server.service.MediaListService;
 import com.mediarchive.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +20,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private MediaListService mediaListService;
 
     @Transactional
     @RequestMapping(value = "/getusers", method = RequestMethod.GET)
-    public Page<User> getAllUsers(@PageableDefault(size = 10) Pageable pageable) {
+    public Object getAllUsers(Pageable pageable) {
         return userService.findAll(pageable);
     }
 
@@ -35,7 +38,12 @@ public class UserController {
 
     @Transactional
     @RequestMapping(value = "/getuser", method = RequestMethod.GET)
-    public Object getUser(String username) {
+    public Object getUser(@RequestParam String username) {
         return userService.getUser(username);
+    }
+
+    @RequestMapping(value = "/media", method = RequestMethod.GET)
+    public Object getMedia() {
+        return mediaListService;
     }
 }

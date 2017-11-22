@@ -13,7 +13,7 @@ public class User implements Serializable {
     @Column(name = "USER_SID")
     private Long sid;
 
-    @OneToOne(optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MediaList mediaList;
 
     @Column(nullable = false, name = "LIST_INDEX")
