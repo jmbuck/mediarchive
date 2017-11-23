@@ -1,0 +1,5 @@
+.Search .search-results {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+}

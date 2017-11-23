@@ -1,0 +1,15 @@
+.Movie {
+    margin: 1rem;
+}
+
+.Movie .preview img {
+    height: 264px;
+    width: 185px;
+}
+
+.Movie .preview .title {
+    width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
