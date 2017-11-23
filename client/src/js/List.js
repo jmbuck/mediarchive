@@ -5,7 +5,7 @@ import '../css/List.css'
 class List extends Component {
   render() {
     const list = this.props.match.params.list;
-    const media = this.props.match.params.media;
+    const media = this.props.media;
 
     return (
       <div className="List">

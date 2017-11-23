@@ -14,8 +14,10 @@ class Main extends Component {
         <Header {...this.props}/>
         {/* List statistics and links go here on the main page */}
         <Switch>
-            <Route exact path="/search/:media/:query/:page" render={(navProps) => <Search {...navProps}/>}/>
-            <Route path="/:media/:list" render={(navProps) => <List {...navProps} />}/>            
+            <Route path="/search/:media/:query/:page" render={(navProps) => <Search {...this.props} {...navProps}/>}/>
+            <Route path="/movies/:list" render={(navProps) => <List media="movies" {...this.props} {...navProps} />}/>
+            <Route path="/tv/:list" render={(navProps) => <List media="tv" {...this.props} {...navProps} />}/>
+            <Route path="/books/:list" render={(navProps) => <List media="books" {...this.props} {...navProps} />}/>            
             <Route path="/" render={(navProps) => <div>List statistics and user information will go here</div>}/>
         </Switch>
         <Footer />
