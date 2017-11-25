@@ -7,9 +7,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.Repository;
 
+import java.util.List;
+
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    Page<User> findAll(Pageable pageable);
+    List<User> findAll();
 
     User findByName(String name);
 

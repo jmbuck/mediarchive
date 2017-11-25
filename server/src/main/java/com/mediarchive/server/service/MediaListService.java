@@ -1,17 +1,18 @@
 package com.mediarchive.server.service;
 
 import com.mediarchive.server.domain.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface MediaListService {
-    Page<MediaList> getMediaList(User user, Pageable pageable);
 
-    Page<Movie> getMovies(MediaList mediaList, Pageable pageable);
+    //START used to have Pageable pageable and Page<>
+    List<Movie> getMovies(MediaList mediaList);
 
-    Page<Series> getShows(MediaList mediaList, Pageable pageable);
+    List<Series> getSeries(MediaList mediaList);
 
-    Page<Book> getBooks(MediaList mediaList, Pageable pageable);
+    List<Book> getBooks(MediaList mediaList);
+    //END used to have Pageable pageable and Page<>
 
     Movie getMovie(MediaList mediaList, int index);
 
@@ -19,11 +20,11 @@ public interface MediaListService {
 
     Movie removeMovie(MediaList mediaList, int index);
 
-    Series getShow(MediaList mediaList, int index);
+    Series getSeries(MediaList mediaList, int index);
 
-    Series addShow(MediaList mediaList, MediaDetails details);
+    Series addSeries(MediaList mediaList, MediaDetails details);
 
-    Series removeShow(MediaList mediaList, int index);
+    Series removeSeries(MediaList mediaList, int index);
 
     Book getBook(MediaList mediaList, int index);
 

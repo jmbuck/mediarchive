@@ -6,8 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface MovieRepository extends CrudRepository<Movie, Long> {
-    Page<Movie> findByMediaList(MediaList mediaList, Pageable pageable);
+    List<Movie> findByMediaList(MediaList mediaList);
     Movie findByMediaListAndIndex(MediaList mediaList, int index);
-    Movie save(Movie movie);
+    <S extends Movie>S save(S movie);
 }

@@ -1,55 +1,92 @@
 package com.mediarchive.server.web;
 
 import com.mediarchive.server.domain.*;
-import com.mediarchive.server.service.MediaListService;
 import com.mediarchive.server.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
-import javax.servlet.http.HttpServlet;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Controller
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/weebs", method = RequestMethod.GET)
-    public @ResponseBody List<User> getAllOfTheUsers(Pageable pageable) {
-        Page<User> page = userService.findAll(pageable);
-        List<User> users = page.getContent();
+    @RequestMapping(value = "/allUsers", method = RequestMethod.GET)
+    public @ResponseBody Object getAllUsers() {
+        logger.info("Request for all users");
+        List<User> users = userService.findAll();
+        String buffer = "";
         for (User u: users) {
-            System.out.println(u + ": " + userService.getBooks(u, pageable).getContent().get(0));
+            buffer += u.toString() + "\n";
         }
-        return page.getContent();
+        return buffer;
     }
 
-    @RequestMapping(value = "createweeb", method = RequestMethod.POST)
-    public @ResponseBody Object createWeeb(@RequestBody String body) {
-        userService.addUser("hard test", "hard test");
-        return HttpStatus.OK;
+    @RequestMapping(value = "getUser", method = RequestMethod.GET)
+    public @ResponseBody Object getUser(@RequestParam("name") String name) {
+        User user = userService.getUser(name);
+        if (user != null) {
+            logger.info("Request for user " + name);
+            return user.toString();
+        }
+        logger.error("Unsuccessful request for user " + name);
+        return HttpStatus.BAD_REQUEST;
     }
 
-    @RequestMapping(value = "addbook", method = RequestMethod.POST)
-    public @ResponseBody Object addBook(@RequestBody String body, Pageable pageable) {
-        String uid = "hard test";
-        User user = userService.getUser(uid);
-        System.out.println("Controller user: " + user);
-        MediaDetails details = new MediaDetails();
-        details.setId("ID");
-        details.setTitle("TITLE");
-        Book b = userService.addCompletedBook(user, details, pageable);
-        System.out.println("Controller user completed: " + user.getMediaCompleted());
-        return HttpStatus.OK;
+    @RequestMapping(value = "addUser", method = RequestMethod.POST)
+    public @ResponseBody Object createUser(@RequestBody String body) {
+        String name = body.substring(body.indexOf("name") + 8, body.indexOf("password") - 5);
+        String password = body.substring(body.indexOf("password") + 12, body.lastIndexOf("\""));
+
+        if (!name.isEmpty() && userService.getUser(name) == null) {
+            userService.addUser(name, password);
+            logger.info("Successfully added user " + name);
+            return HttpStatus.OK;
+        }
+        logger.error("Unsuccessful creation of user " + name);
+        return HttpStatus.BAD_REQUEST;
     }
+
+    @RequestMapping(value = "getCompletedList", method = RequestMethod.GET)
+    public @ResponseBody Object getCompletedList(@RequestParam("name") String name) {
+        User user = userService.getUser(name);
+        if (user != null) {
+            logger.info("Request for user " + name + "'s completed list");
+            return user.getMediaCompleted();
+        }
+        logger.error("Could not return user " + name + "'s completed list");
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @RequestMapping(value = "getUnderwayList", method = RequestMethod.GET)
+    public @ResponseBody Object getUnderwayList(@RequestParam("name") String name) {
+        User user = userService.getUser(name);
+        if (user != null) {
+            logger.info("Request for user " + name + "'s Underway list");
+            return user.getMediaUnderway();
+        }
+        logger.error("Could not return user " + name + "'s Underway list");
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @RequestMapping(value = "getIntentList", method = RequestMethod.GET)
+    public @ResponseBody Object getIntentList(@RequestParam("name") String name) {
+        User user = userService.getUser(name);
+        if (user != null) {
+            logger.info("Request for user " + name + "'s Intent list");
+            return user.getMediaIntent();
+        }
+        logger.error("Could not return user " + name + "'s Intent list");
+        return HttpStatus.BAD_REQUEST;
+    }
+
 }

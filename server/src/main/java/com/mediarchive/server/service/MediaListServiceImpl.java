@@ -1,50 +1,40 @@
 package com.mediarchive.server.service;
 
 import com.mediarchive.server.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Component("mediaListService")
 @Transactional
 public class MediaListServiceImpl implements MediaListService {
 
-    private final MediaListRepository mediaListRepository;
     private final MovieRepository movieRepository;
     private final SeriesRepository seriesRepository;
     private final BookRepository bookRepository;
 
-    public MediaListServiceImpl(MediaListRepository mediaListRepository,
-                                MovieRepository movieRepository,
+    public MediaListServiceImpl(MovieRepository movieRepository,
                                 SeriesRepository seriesRepository,
                                 BookRepository bookRepository) {
-        this.mediaListRepository = mediaListRepository;
         this.movieRepository = movieRepository;
         this.seriesRepository = seriesRepository;
         this.bookRepository = bookRepository;
     }
 
     @Override
-    public Page<MediaList> getMediaList(User user, Pageable pageable) {
-        return this.mediaListRepository.findByUser(user, pageable);
+    public List<Movie> getMovies(MediaList mediaList) {
+        return this.movieRepository.findByMediaList(mediaList);
     }
 
     @Override
-    public Page<Movie> getMovies(MediaList mediaList, Pageable pageable) {
-        return this.movieRepository.findByMediaList(mediaList, pageable);
+    public List<Series> getSeries(MediaList mediaList) {
+        return this.seriesRepository.findByMediaList(mediaList);
     }
 
     @Override
-    public Page<Series> getShows(MediaList mediaList, Pageable pageable) {
-        return this.seriesRepository.findByMediaList(mediaList, pageable);
-    }
-
-    @Override
-    public Page<Book> getBooks(MediaList mediaList, Pageable pageable) {
-        return this.bookRepository.findByMediaList(mediaList, pageable);
+    public List<Book> getBooks(MediaList mediaList) {
+        return this.bookRepository.findByMediaList(mediaList);
     }
 
     @Override
@@ -66,19 +56,19 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public Series getShow(MediaList mediaList, int index) {
+    public Series getSeries(MediaList mediaList, int index) {
         return this.seriesRepository.findByMediaListAndIndex(mediaList, index);
     }
 
     @Override
-    public Series addShow(MediaList mediaList, MediaDetails details) {
+    public Series addSeries(MediaList mediaList, MediaDetails details) {
         Series series = new Series(mediaList, 1, details);
         return this.seriesRepository.save(series);
     }
 
     @Override
-    public Series removeShow(MediaList mediaList, int index) {
-        Series series = getShow(mediaList, index);
+    public Series removeSeries(MediaList mediaList, int index) {
+        Series series = getSeries(mediaList, index);
         this.seriesRepository.delete(series);
         return series;
     }

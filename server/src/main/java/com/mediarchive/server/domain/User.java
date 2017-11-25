@@ -39,10 +39,9 @@ public class User implements Serializable {
         this.name = name;
         this.password = password;
         this.index = index;
-        System.out.println("User was created " + this);
-        System.out.println(this.getMediaCompleted());
         this.mediaCompleted = new MediaList();
-        System.out.println(this.getMediaCompleted());
+        this.mediaUnderway = new MediaList();
+        this.mediaIntent = new MediaList();
     }
 
     public String getName() {
@@ -63,5 +62,18 @@ public class User implements Serializable {
 
     public MediaList getMediaCompleted() {
         return mediaCompleted;
+    }
+
+    public MediaList getMediaUnderway() {
+        return mediaUnderway;
+    }
+
+    public MediaList getMediaIntent() {
+        return mediaIntent;
+    }
+
+    @Override
+    public String toString() {
+        return  "\"name\": " + name + "";
     }
 }

@@ -97,8 +97,4 @@ public class Book implements Serializable {
         this.currentPage = currentPage;
     }
 
-    @Override
-    public String toString() {
-        return title + ": " + id;
-    }
 }
