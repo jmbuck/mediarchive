@@ -96,4 +96,9 @@ public class Book implements Serializable {
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
     }
+
+    @Override
+    public String toString() {
+        return title + ": " + id;
+    }
 }

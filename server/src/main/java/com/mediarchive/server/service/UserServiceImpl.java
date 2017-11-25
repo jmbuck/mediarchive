@@ -1,6 +1,7 @@
 package com.mediarchive.server.service;
 
 import com.mediarchive.server.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -11,8 +12,11 @@ import javax.transaction.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private MediaListRepository mediaListRepository;
+    @Autowired
+    private MediaListService mediaListService;
+
+    private final MediaListRepository mediaListRepository;
+    private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository, MediaListRepository mediaListRepository) {
         this.userRepository = userRepository;
@@ -41,8 +45,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<MediaList> getMediaComplete(User user, Pageable pageable) {
-        return this.mediaListRepository.findByUser_MediaCompleted(user, pageable);
+    public MediaList getMediaComplete(User user, Pageable pageable) {
+        return user.getMediaCompleted();
     }
 
     @Override
@@ -53,5 +57,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<MediaList> getMediaIntent(User user, Pageable pageable) {
         return this.mediaListRepository.findByUser_MediaIntent(user, pageable);
+    }
+
+    @Override
+    public Book addCompletedBook(User user, MediaDetails mediaDetails, Pageable pageable) {
+       return mediaListService.addBook(user.getMediaCompleted(), mediaDetails);
+    }
+
+    @Override
+    public Page<Book> getBooks(User user, Pageable pageable) {
+        return mediaListService.getBooks(user.getMediaCompleted(), pageable);
     }
 }

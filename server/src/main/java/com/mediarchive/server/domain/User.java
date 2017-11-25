@@ -39,8 +39,10 @@ public class User implements Serializable {
         this.name = name;
         this.password = password;
         this.index = index;
-        System.out.println("User was created");
+        System.out.println("User was created " + this);
+        System.out.println(this.getMediaCompleted());
         this.mediaCompleted = new MediaList();
+        System.out.println(this.getMediaCompleted());
     }
 
     public String getName() {
@@ -59,4 +61,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public MediaList getMediaCompleted() {
+        return mediaCompleted;
+    }
 }
