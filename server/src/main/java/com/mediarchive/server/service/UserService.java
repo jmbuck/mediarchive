@@ -14,4 +14,10 @@ public interface UserService {
     User addUser(String name, String password);
 
     Page<MediaList> getMediaList(User user, Pageable pageable);
+
+    Page<MediaList> getMediaComplete(User user, Pageable pageable);
+
+    Page<MediaList> getMediaUnderway(User user, Pageable pageable);
+
+    Page<MediaList> getMediaIntent(User user, Pageable pageable);
 }

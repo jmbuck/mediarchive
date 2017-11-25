@@ -10,4 +10,10 @@ interface MediaListRepository extends CrudRepository<MediaList, Long> {
 
     Page<MediaList> findByUser(User user, Pageable pageable);
 
+    Page<MediaList> findByUser_MediaCompleted(User user, Pageable pageable);
+
+    Page<MediaList> findByUser_MediaUnderway(User user, Pageable pageable);
+
+    Page<MediaList> findByUser_MediaIntent(User user, Pageable pageable);
+
 }

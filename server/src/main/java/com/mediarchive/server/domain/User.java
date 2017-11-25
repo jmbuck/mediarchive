@@ -1,7 +1,5 @@
 package com.mediarchive.server.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -14,15 +12,24 @@ public class User implements Serializable {
     private Long sid;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private MediaList mediaList;
+    @JoinColumn(name = "COMPLETED_LIST")
+    private MediaList mediaCompleted;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "UNDERWAY_LIST")
+    private MediaList mediaUnderway;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "INTENT_LIST")
+    private MediaList mediaIntent;
 
     @Column(nullable = false, name = "LIST_INDEX")
     private int index;
 
-    @Column(nullable = false, name = "NAME")
+    @Column(name = "NAME")
     private String name;
 
-    @JsonIgnore
+    @Column(name = "PASSWORD")
     private String password;
 
     protected User() {
@@ -32,6 +39,8 @@ public class User implements Serializable {
         this.name = name;
         this.password = password;
         this.index = index;
+        System.out.println("User was created");
+        this.mediaCompleted = new MediaList();
     }
 
     public String getName() {
@@ -40,6 +49,10 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {

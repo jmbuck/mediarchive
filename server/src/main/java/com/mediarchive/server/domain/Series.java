@@ -11,7 +11,7 @@ public class Series implements Serializable {
     @Column(name = "MEDIA_SID")
     private Long sid;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MediaList mediaList;
 
     @Column(nullable = false, name = "LIST_INDEX")
