@@ -121,7 +121,7 @@ class Search extends Component {
   renderResults = (media) => {
     if(media === 'movies') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => 
+      ? <ul className="search-results">{this.state.results.map((result, i) => 
           <Movie 
             key={i}
             index={i}
@@ -133,7 +133,7 @@ class Search extends Component {
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'tv') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) => 
+      ? <ul className="search-results">{this.state.results.map((result, i) => 
           <Show 
             key={i}
             index={i}
@@ -145,7 +145,7 @@ class Search extends Component {
       : this.state.fetched ? <div>No results found.</div> : <div>Searching...</div>
     } else if(media === 'books') {
       return this.state.results && this.state.results.length > 0
-      ? <ul>{this.state.results.map((result, i) =>
+      ? <ul className="search-results">{this.state.results.map((result, i) =>
           <Book 
             key={i}
             index={i}
