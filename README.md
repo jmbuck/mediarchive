@@ -19,7 +19,7 @@ Start by cloning this repository onto your computer, then follow the instruction
 ### Server
 1. Create environment on AWS Elastic Beanstalk for Java and MySQL persistence
 2. Update `application.properties` with new MySQL endpoint and security
-    ######Note: AWS defaults on port 5000 and database ebdb
+    ###### Note: AWS defaults on port 5000 and database ebdb
 3. Install Apache Maven i.e. Ubuntu: `sudo apt-get install maven`
 4. Run `mvn clean package install` in the server directory to generate executable `.jar` file
 5. Deploy `.jar` file in the AWS environment
