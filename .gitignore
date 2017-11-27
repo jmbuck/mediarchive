@@ -21,5 +21,3 @@ client/yarn-debug.log*
 client/yarn-error.log*
 
 client/src/keys.js
-
-server/src/main/resources/application-secret.properties
