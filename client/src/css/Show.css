@@ -1,0 +1,15 @@
+.Show {
+    margin: 1rem;
+}
+
+.Show .preview img {
+    height: 264px;
+    width: 185px;
+}
+
+.Show .preview .title {
+    width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

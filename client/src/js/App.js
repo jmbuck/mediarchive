@@ -28,6 +28,18 @@ class App extends Component {
     return output
   }
 
+  addMovie = (ev, movie) => {
+    console.log('add movie')
+  }
+
+  addShow = (ev, show) => {
+    console.log('add show')
+  }
+
+  addBook = (ev, book) => {
+    console.log('add book')
+  }
+
   render() {
     return (
       <div className="App">
@@ -35,7 +47,10 @@ class App extends Component {
           <Route path="/" render={() =>
               this.signedIn() 
               ? <Main 
-                  formatDuration={this.formatDuration}                
+                  formatDuration={this.formatDuration} 
+                  addMovie={this.addMovie}
+                  addShow={this.addShow}
+                  addBook={this.addBook}               
                   {...this.props} 
                 />
               : <Redirect to="/sign-in" />
