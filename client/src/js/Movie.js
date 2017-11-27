@@ -17,6 +17,7 @@ class Movie extends Component {
   }
 
   fetchMovieInfo = (movie) => {
+    console.log('api call')
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
       .then(detailedMovie => {
@@ -93,7 +94,7 @@ class Movie extends Component {
     return (
         <form className="MovieForm" onSubmit={(ev) => {
             ev.preventDefault();
-            console.log('submit, add to list/edit')
+            this.props.addMovie(ev, movie)
         }}>
             <div className="fields">
                 <div className="category">
@@ -133,7 +134,7 @@ class Movie extends Component {
     const path = `https://image.tmdb.org/t/p/w185${movie.poster_path}`
     return (
       <div>
-        <div id="light" className="white-content">
+        <div className="white-content">
           {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
             movie.poster_path 
             ? <img src={path} alt="movie poster" />
@@ -149,12 +150,12 @@ class Movie extends Component {
 
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({onForm: !this.state.onForm})
               if(this.state.onForm) {
                 this.props.history.push(this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`)
               } else {
                 this.props.history.push(this.props.search ? `/search/movies/${query}/${page}/${movie.id}/add` : `/movies/:list/${movie.id}/edit`)
               }
+              this.setState({onForm: !this.state.onForm})
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
@@ -164,7 +165,7 @@ class Movie extends Component {
 
         </div>
 
-        <div id="fade" className="black-overlay" onClick={(ev) => {
+        <div className="black-overlay" onClick={(ev) => {
           this.props.history.push(this.props.search ? `/search/movies/${query}/${page}` : `/movies/:list`)
         }}></div>
       </div>
@@ -172,7 +173,6 @@ class Movie extends Component {
   }
 
   render() {
-    const media = this.props.match.params.media
     const query = this.props.match.params.query
     const page = this.props.match.params.page
     const movie = {...this.state.movie}
@@ -180,18 +180,17 @@ class Movie extends Component {
 
     return (
       <li className="Movie">
-        { this.props.search 
-          ? <Route path={`/search/movies/${query}/${page}/${movie.id}`} render={(navProps) => {
-              this.fetchMovieInfo(movie)
-              return this.renderMovie(navProps, movie, query, page) 
-             }}/>
-          : <Route path={`/movies/:list/${movie.id}`} render={(navProps) => {
-              this.fetchMovieInfo(movie) 
-              return this.renderMovie(navProps, movie, query, page)
+        <Route path={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`} render={(navProps) => {
+          if(!this.state.fetched) this.fetchMovieInfo(movie)
+          return this.renderMovie(navProps, movie, query, page) 
         }}/>
-        }
-        <Link to={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`}>
-          <div className="preview" onClick={this.showMovieInfo}>
+
+        <Link 
+          to={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`}
+          onClick={() => {this.setState({onForm: false})}}
+          className="preview"
+        >
+          <div className="preview">
             <div className="title" title={movie.title}>{movie.title}</div>
             {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
               movie.poster_path 
@@ -201,7 +200,7 @@ class Movie extends Component {
           </div>
         </Link>
       </li>
-    );
+    )
   }
 }
 
