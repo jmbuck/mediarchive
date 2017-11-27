@@ -15,7 +15,7 @@ public class MediaList implements Serializable {
     @Column(name = "LIST_INDEX")
     private int index;
 
-    @OneToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -33,9 +33,9 @@ public class MediaList implements Serializable {
     protected MediaList() {
     }
 
-    public MediaList(User user, int index) {
+    public MediaList(User user) {
         this.user = user;
-        this.index = index;
-        statistics = new Statistics(this, 1);
+        //this.index = index;
+        statistics = new Statistics(this);
     }
 }

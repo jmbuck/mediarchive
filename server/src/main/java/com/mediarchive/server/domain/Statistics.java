@@ -18,10 +18,6 @@ public class Statistics implements Serializable {
     @OneToOne
     private MediaList mediaList;
 
-    @JsonIgnore
-    @Column(name = "LIST_INDEX")
-    private int index;
-
     @Column(name = "TOTAL_MOVIES")
     private int total_movies;
 
@@ -76,34 +72,8 @@ public class Statistics implements Serializable {
     protected Statistics() {
     }
 
-    public Statistics(MediaList mediaList, int index) {
+    public Statistics(MediaList mediaList) {
         this.mediaList = mediaList;
-        this.index = index;
-        this.total_episodes = 0;
-        this.total_show_runtime = 0;
-        this.mean_episode_runtime = 0;
-        this.total_books = 0;
-        this.total_pages = 0;
-        this.mean_pages = 0;
-        this.total_shows = 0;
-        this.total_movies = 0;
-        this.total_movie_runtime = 0;
-        this.total_movie_score = 0;
-        this.total_book_score = 0;
-        this.total_show_score = 0;
-        this.total_seasons = 0;
-        this.mean_movie_runtime = 0;
-        this.mean_movie_score = 0;
-        this.mean_book_score = 0;
-        this.mean_show_score = 0;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public int getIndex() {
-        return this.index;
     }
 
     public Long getSid() {

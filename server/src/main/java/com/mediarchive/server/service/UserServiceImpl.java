@@ -17,14 +17,14 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private MediaListService mediaListService;
+    private final MediaListService mediaListService;
     private final UserRepository userRepository;
 
     private ObjectMapper objectMapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, MediaListService mediaListService) {
         this.userRepository = userRepository;
+        this.mediaListService = mediaListService;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -51,11 +51,9 @@ public class UserServiceImpl implements UserService {
         User user = null;
         try {
             user = objectMapper.readValue(body, User.class);
-            User real = new User(user.getUsername(), user.getPassword(), 1);
-            if (getUser(real.getUsername()) == null) {
-                real.newLists();
-                this.userRepository.save(real);
-                logger.info("Successfully created new user " + real.getUsername());
+            if (this.userRepository.findByUsername(user.getUsername()) == null) {
+                this.userRepository.save(user);
+                logger.info("Successfully created new user " + user.getUsername());
             }
             else {
                 logger.error("User already exists");
@@ -106,8 +104,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            movie = mediaListService.addMovie(user.getMediaCompleted(), details);
-            logger.info("Successfully added completed movie to user " + username);
+            if (user != null) {
+                movie = mediaListService.addMovie(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed movie to user " + username);
+                return movie;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -132,8 +133,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            series = mediaListService.addSeries(user.getMediaCompleted(), details);
-            logger.info("Successfully added completed series to user " + username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed series to user " + username);
+                return series;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -158,9 +162,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            book = mediaListService.addBook(user.getMediaCompleted(), details);
-            logger.info("Successfully added completed book to user " + username);
-            return book;
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed book to user " + username);
+                return book;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -227,8 +233,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            movie = mediaListService.addMovie(user.getMediaUnderway(), details);
-            logger.info("Successfully added underway movie to user " + username);
+            if (user != null) {
+                movie = mediaListService.addMovie(user.getMediaUnderway(), details);
+                logger.info("Successfully added underway movie to user " + username);
+                return movie;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -253,8 +262,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            series = mediaListService.addSeries(user.getMediaUnderway(), details);
-            logger.info("Successfully added underway series to user " + username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaUnderway(), details);
+                logger.info("Successfully added underway series to user " + username);
+                return series;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -279,8 +291,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            book = mediaListService.addBook(user.getMediaUnderway(), details);
-            logger.info("Successfully added underway book to user " + username);
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaUnderway(), details);
+                logger.info("Successfully added underway book to user " + username);
+                return book;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -347,8 +362,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            movie = mediaListService.addMovie(user.getMediaIntent(), details);
-            logger.info("Successfully added intent movie to user " + username);
+            if (user != null) {
+                movie = mediaListService.addMovie(user.getMediaIntent(), details);
+                logger.info("Successfully added intent movie to user " + username);
+                return movie;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -373,8 +391,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            series = mediaListService.addSeries(user.getMediaIntent(), details);
-            logger.info("Successfully added intent series to user " + username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaIntent(), details);
+                logger.info("Successfully added intent series to user " + username);
+                return series;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }
@@ -399,8 +420,11 @@ public class UserServiceImpl implements UserService {
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
             User user = getUser(username);
-            book = mediaListService.addBook(user.getMediaIntent(), details);
-            logger.info("Successfully added intent book to user " + username);
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaIntent(), details);
+                logger.info("Successfully added intent book to user " + username);
+                return book;
+            }
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }

@@ -29,10 +29,6 @@ public class User implements Serializable {
     @JoinColumn(name = "INTENT_LIST")
     private MediaList mediaIntent;
 
-    @JsonIgnore
-    @Column(nullable = false, name = "LIST_INDEX")
-    private int index;
-
     @Column(name = "USERNAME")
     private String username;
 
@@ -41,22 +37,17 @@ public class User implements Serializable {
     private String password;
 
     protected User() {
+        this.mediaCompleted = new MediaList(this);
+        this.mediaUnderway = new MediaList(this);
+        this.mediaIntent = new MediaList(this);
     }
 
-    public User(String username, String password, int index) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.index = index;
-//        this.mediaCompleted = new MediaList();
-//        this.mediaUnderway = new MediaList();
-//        this.mediaIntent = new MediaList();
-//        System.out.println("MEDIA COMPLETED " + mediaCompleted);
-    }
-
-    public void newLists() {
-        this.mediaCompleted = new MediaList(this, 1);
-        this.mediaUnderway = new MediaList(this, 1);
-        this.mediaIntent = new MediaList(this, 1);
+        this.mediaCompleted = new MediaList(this);
+        this.mediaUnderway = new MediaList(this);
+        this.mediaIntent = new MediaList(this);
     }
 
     public String getUsername() {
@@ -87,8 +78,4 @@ public class User implements Serializable {
         return mediaIntent;
     }
 
-    @Override
-    public String toString() {
-        return  "\"username\": " + username + "";
-    }
 }

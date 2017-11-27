@@ -18,18 +18,6 @@ public class Book implements Serializable {
     @ManyToOne
     private MediaList mediaList;
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    @JsonIgnore
-    @Column(name = "LIST_INDEX")
-    private int index;
-
     @Column(name = "API_ID")
     private String id;
 
@@ -51,9 +39,8 @@ public class Book implements Serializable {
     protected Book() {
     }
 
-    public Book(MediaList mediaList, int index, MediaDetails details) {
+    public Book(MediaList mediaList, MediaDetails details) {
         this.mediaList = mediaList;
-        this.index = index;
         this.id = details.getId();
         this.title = details.getTitle();
         this.score = details.getScore();

@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface MovieRepository extends CrudRepository<Movie, Long> {
     List<Movie> findByMediaList(MediaList mediaList);
-    Movie findByMediaListAndIndex(MediaList mediaList, int index);
     Movie findByMediaListAndId(MediaList mediaList, String id);
     <S extends Movie>S save(S movie);
 }

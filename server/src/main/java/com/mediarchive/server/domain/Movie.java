@@ -18,10 +18,6 @@ public class Movie implements Serializable {
     @ManyToOne
     private MediaList mediaList;
 
-    @JsonIgnore
-    @Column(name = "LIST_INDEX")
-    private int index;
-
     @Column(name = "API_ID")
     private String id;
 
@@ -40,9 +36,8 @@ public class Movie implements Serializable {
     protected Movie() {
     }
 
-    public Movie(MediaList mediaList, int index, MediaDetails details) {
+    public Movie(MediaList mediaList, MediaDetails details) {
         this.mediaList = mediaList;
-        this.index = index;
         this.id = details.getId();
         this.title = details.getTitle();
         this.score = details.getScore();

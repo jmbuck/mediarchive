@@ -16,19 +16,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
+    @RequestMapping(value = "getUsers", method = RequestMethod.GET)
     public @ResponseBody Object getUsers() {
         List<User> users = userService.findAll();
-        return users.toString();
+        return users;
     }
 
     @RequestMapping(value = "getUser", method = RequestMethod.GET)
     public @ResponseBody Object getUser(@RequestParam("username") String username) {
         User user = userService.getUser(username);
         if (user != null) {
-            return user.toString();
+            return user;
         }
-        //user does not exist
         return HttpStatus.BAD_REQUEST;
     }
     
