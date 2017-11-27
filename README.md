@@ -20,7 +20,7 @@ Start by cloning this repository onto your computer, then follow the instruction
 1. Install Apache Maven i.e. `sudo apt-get install maven`
 2. Run `$ ./mvn clean package install` in the server directory
 3. Locate the generated `.jar` file to execute locally  
-  **__Running on AWS__**
+  _Running on AWS_  
   1. Create environment on AWS Elastic Beanstalk [(step-by-step)](https://aws.amazon.com/blogs/devops/deploying-a-spring-boot-application-on-aws-using-aws-elastic-beanstalk/)
   2. Update [`application.properties`](../mediarchive/server/src/main/resources/application.properties) with AWS credentials  
   3. Deploy `.jar` file in the AWS environment
