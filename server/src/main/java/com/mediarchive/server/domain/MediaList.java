@@ -24,5 +24,6 @@ public class MediaList implements Serializable {
     @OneToMany//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Book> books;
 
-
+    @OneToOne
+    private Statistics statistics;
 }
