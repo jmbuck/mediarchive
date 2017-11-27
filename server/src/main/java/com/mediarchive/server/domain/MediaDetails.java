@@ -3,14 +3,22 @@ package com.mediarchive.server.domain;
 import java.io.Serializable;
 
 public class MediaDetails implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private String id;
-    private long startEpoch;
-    private long finishedEpoch;
-    private int rating;
+    private int runtime;
+    private int score;
     private String title;
-    private int current;
+    private String watched_date;
+    private int episode_runtime;
+    private int number_of_episodes;
+    private int number_of_seasons;
+    private String start_date;
+    private String end_date;
+    private int episodes_watched;
+    private int seasons_watched;
+    private int page_count;
 
     public MediaDetails() {
     }
@@ -23,28 +31,20 @@ public class MediaDetails implements Serializable {
         this.id = id;
     }
 
-    public long getStartEpoch() {
-        return startEpoch;
+    public int getRuntime() {
+        return runtime;
     }
 
-    public void setStartEpoch(long startEpoch) {
-        this.startEpoch = startEpoch;
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
     }
 
-    public long getFinishedEpoch() {
-        return finishedEpoch;
+    public int getScore() {
+        return score;
     }
 
-    public void setFinishedEpoch(long finishedEpoch) {
-        this.finishedEpoch = finishedEpoch;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public String getTitle() {
@@ -55,11 +55,92 @@ public class MediaDetails implements Serializable {
         this.title = title;
     }
 
-    public int getCurrent() {
-        return current;
+    public String getWatched_date() {
+        return watched_date;
     }
 
-    public void setCurrent(int current) {
-        this.current = current;
+    public void setWatched_date(String watched_date) {
+        this.watched_date = watched_date;
+    }
+
+    public int getEpisode_runtime() {
+        return episode_runtime;
+    }
+
+    public void setEpisode_runtime(int episode_runtime) {
+        this.episode_runtime = episode_runtime;
+    }
+
+    public int getNumber_of_episodes() {
+        return number_of_episodes;
+    }
+
+    public void setNumber_of_episodes(int number_of_episodes) {
+        this.number_of_episodes = number_of_episodes;
+    }
+
+    public int getNumber_of_seasons() {
+        return number_of_seasons;
+    }
+
+    public void setNumber_of_seasons(int number_of_seasons) {
+        this.number_of_seasons = number_of_seasons;
+    }
+
+    public String getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
+    }
+
+    public String getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(String end_date) {
+        this.end_date = end_date;
+    }
+
+    public int getEpisodes_watched() {
+        return episodes_watched;
+    }
+
+    public void setEpisodes_watched(int episodes_watched) {
+        this.episodes_watched = episodes_watched;
+    }
+
+    public int getSeasons_watched() {
+        return seasons_watched;
+    }
+
+    public void setSeasons_watched(int seasons_watched) {
+        this.seasons_watched = seasons_watched;
+    }
+
+    public int getPage_count() {
+        return page_count;
+    }
+
+    public void setPage_count(int page_count) {
+        this.page_count = page_count;
+    }
+
+    @Override
+    public String toString() {
+        return "" + id + "\n" +
+                "" + runtime + "\n" +
+                "" + score + "\n" +
+                "" + title + "\n" +
+                "" + watched_date + "\n" +
+                "" + episode_runtime + "\n" +
+                "" + number_of_episodes + "\n" +
+                "" + number_of_seasons + "\n" +
+                "" + start_date + "\n" +
+                "" + end_date + "\n" +
+                "" + episodes_watched + "\n" +
+                "" + seasons_watched + "\n" +
+                "" + page_count;
     }
 }

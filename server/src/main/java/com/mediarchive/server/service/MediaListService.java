@@ -6,29 +6,40 @@ import java.util.List;
 
 public interface MediaListService {
 
-    //START used to have Pageable pageable and Page<>
+    void saveLists(User user);
+
+    void saveStats(Statistics s);
+
     List<Movie> getMovies(MediaList mediaList);
 
     List<Series> getSeries(MediaList mediaList);
 
     List<Book> getBooks(MediaList mediaList);
-    //END used to have Pageable pageable and Page<>
+
+    Statistics getStatistics(MediaList mediaList);
+
+    Movie getMovie(MediaList mediaList, String id);
 
     Movie getMovie(MediaList mediaList, int index);
 
     Movie addMovie(MediaList mediaList, MediaDetails details);
 
-    Movie removeMovie(MediaList mediaList, int index);
+    Movie removeMovie(MediaList mediaList, String id);
+
+    Series getSeries(MediaList mediaList, String id);
 
     Series getSeries(MediaList mediaList, int index);
 
     Series addSeries(MediaList mediaList, MediaDetails details);
 
-    Series removeSeries(MediaList mediaList, int index);
+    Series removeSeries(MediaList mediaList, String id);
+
+    Book getBook(MediaList mediaList, String id);
 
     Book getBook(MediaList mediaList, int index);
 
     Book addBook(MediaList mediaList, MediaDetails details);
 
-    Book removeBook(MediaList mediaList, int index);
+    Book removeBook(MediaList mediaList, String id);
+
 }

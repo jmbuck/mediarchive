@@ -1,5 +1,7 @@
 package com.mediarchive.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -8,11 +10,17 @@ public class Statistics implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     @Column(name = "MEDIA_SID")
     private Long sid;
 
+    @JsonIgnore
     @OneToOne
     private MediaList mediaList;
+
+    @JsonIgnore
+    @Column(name = "LIST_INDEX")
+    private int index;
 
     @Column(name = "TOTAL_MOVIES")
     private int total_movies;
@@ -68,8 +76,34 @@ public class Statistics implements Serializable {
     protected Statistics() {
     }
 
-    public Statistics(MediaList mediaList) {
+    public Statistics(MediaList mediaList, int index) {
         this.mediaList = mediaList;
+        this.index = index;
+        this.total_episodes = 0;
+        this.total_show_runtime = 0;
+        this.mean_episode_runtime = 0;
+        this.total_books = 0;
+        this.total_pages = 0;
+        this.mean_pages = 0;
+        this.total_shows = 0;
+        this.total_movies = 0;
+        this.total_movie_runtime = 0;
+        this.total_movie_score = 0;
+        this.total_book_score = 0;
+        this.total_show_score = 0;
+        this.total_seasons = 0;
+        this.mean_movie_runtime = 0;
+        this.mean_movie_score = 0;
+        this.mean_book_score = 0;
+        this.mean_show_score = 0;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return this.index;
     }
 
     public Long getSid() {
@@ -222,5 +256,58 @@ public class Statistics implements Serializable {
 
     public void setMean_episode_runtime(int mean_episode_runtime) {
         this.mean_episode_runtime = mean_episode_runtime;
+    }
+
+    public void updateTotalMovies(int update) {
+        this.total_movies += update;
+    }
+
+    public void updateTotalBooks(int update) {
+        this.total_books += update;
+    }
+
+    public void updateTotalShows(int update) {
+        this.total_shows += update;
+    }
+
+    public void updateTotalEpisodes(int update) {
+        this.total_episodes += update;
+    }
+
+    public void updateTotalSeasons(int update) {
+        this.total_seasons += update;
+    }
+
+    public void updateTotalPages(int update) {
+        this.total_pages += update;
+    }
+
+    public void updateTotalMovieRuntime(int update) {
+        this.total_movie_runtime += update;
+    }
+
+    public void updateTotalShowRuntime(int update) {
+        this.total_show_runtime += update;
+    }
+
+    public void updateTotalMovieScore(int update) {
+        this.total_movie_score += update;
+    }
+
+    public void updateTotalShowScore(int update) {
+        this.total_show_score += update;
+    }
+
+    public void updateTotalBookScore(int update) {
+        this.total_book_score += update;
+    }
+    
+    public void updateMeans() {
+        this.mean_movie_score = (int) ((double)this.total_movie_score / this.total_movies);
+        this.mean_show_score = (int) ((double)this.total_show_score / this.total_shows);
+        this.mean_book_score = (int) ((double)this.total_book_score / this.total_books);
+        this.mean_movie_runtime = (int) ((double)this.total_movie_runtime / this.total_movies);
+        this.mean_pages = (int) ((double)this.total_pages / this.total_books);
+        this.mean_episode_runtime = (int) ((double)this.total_show_runtime / this.total_episodes);
     }
 }

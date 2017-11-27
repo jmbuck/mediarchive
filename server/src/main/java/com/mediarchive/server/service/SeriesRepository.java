@@ -9,5 +9,6 @@ import java.util.List;
 public interface SeriesRepository extends CrudRepository<Series, Long> {
     List<Series> findByMediaList(MediaList mediaList);
     Series findByMediaListAndIndex(MediaList mediaList, int index);
+    Series findByMediaListAndId(MediaList mediaList, String id);
     <S extends Series>S save(S series);
 }

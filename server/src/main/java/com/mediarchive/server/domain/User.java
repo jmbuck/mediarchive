@@ -1,5 +1,7 @@
 package com.mediarchive.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -8,48 +10,61 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     @Column(name = "USER_SID")
     private Long sid;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "COMPLETED_LIST")
     private MediaList mediaCompleted;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "UNDERWAY_LIST")
     private MediaList mediaUnderway;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "INTENT_LIST")
     private MediaList mediaIntent;
 
+    @JsonIgnore
     @Column(nullable = false, name = "LIST_INDEX")
     private int index;
 
-    @Column(name = "NAME")
-    private String name;
+    @Column(name = "USERNAME")
+    private String username;
 
+    @JsonIgnore
     @Column(name = "PASSWORD")
     private String password;
 
     protected User() {
     }
 
-    public User(String name, String password, int index) {
-        this.name = name;
+    public User(String username, String password, int index) {
+        this.username = username;
         this.password = password;
         this.index = index;
-        this.mediaCompleted = new MediaList();
-        this.mediaUnderway = new MediaList();
-        this.mediaIntent = new MediaList();
+//        this.mediaCompleted = new MediaList();
+//        this.mediaUnderway = new MediaList();
+//        this.mediaIntent = new MediaList();
+//        System.out.println("MEDIA COMPLETED " + mediaCompleted);
     }
 
-    public String getName() {
-        return name;
+    public void newLists() {
+        this.mediaCompleted = new MediaList(this, 1);
+        this.mediaUnderway = new MediaList(this, 1);
+        this.mediaIntent = new MediaList(this, 1);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -74,6 +89,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return  "\"name\": " + name + "";
+        return  "\"username\": " + username + "";
     }
 }

@@ -1,5 +1,7 @@
 package com.mediarchive.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -8,32 +10,47 @@ public class Series implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     @Column(name = "MEDIA_SID")
     private Long sid;
 
-    @ManyToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToOne
     private MediaList mediaList;
 
-    @Column(nullable = false, name = "LIST_INDEX")
+    @JsonIgnore
+    @Column(name = "LIST_INDEX")
     private int index;
 
     @Column(name = "API_ID")
     private String id;
 
-    @Column(name = "DATE_STARTED")
-    private long startEpoch;
-
-    @Column(name = "DATE_FINISHED")
-    private long finishedEpoch;
-
-    @Column(name = "RATING")
-    private int rating;
-
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "CURRENT_EPISODE")
-    private int currentEpisode;
+    @Column(name = "score")
+    private int score;
+
+    @Column(name = "START_DATE")
+    private String start_date;
+
+    @Column(name = "END_DATE")
+    private String end_date;
+
+    @Column(name = "EPISODES_WATCHED")
+    private int episodes_watched;
+
+    @Column(name = "SEASONS_WATCHED")
+    private int seasons_watched;
+
+    @Column(name = "EPISODE_RUNTIME")
+    private int episode_runtime;
+
+    @Column(name = "NUMBER_OF_EPISODES")
+    private int number_of_episodes;
+
+    @Column(name = "NUMBER_OF_SEASONS")
+    private int number_of_seasons;
 
     protected Series() {
     }
@@ -42,11 +59,15 @@ public class Series implements Serializable {
         this.mediaList = mediaList;
         this.index = index;
         this.id = details.getId();
-        this.startEpoch = details.getStartEpoch();
-        this.finishedEpoch = details.getFinishedEpoch();
-        this.rating = details.getRating();
         this.title = details.getTitle();
-        this.currentEpisode = details.getCurrent();
+        this.score = details.getScore();
+        this.start_date = details.getStart_date();
+        this.end_date = details.getEnd_date();
+        this.episodes_watched = details.getEpisodes_watched();
+        this.seasons_watched = details.getSeasons_watched();
+        this.episode_runtime = details.getEpisode_runtime();
+        this.number_of_episodes = details.getNumber_of_episodes();
+        this.number_of_seasons = details.getNumber_of_seasons();
     }
 
     public String getId() {
@@ -57,30 +78,6 @@ public class Series implements Serializable {
         this.id = id;
     }
 
-    public long getStartEpoch() {
-        return startEpoch;
-    }
-
-    public void setStartEpoch(long startEpoch) {
-        this.startEpoch = startEpoch;
-    }
-
-    public long getFinishedEpoch() {
-        return finishedEpoch;
-    }
-
-    public void setFinishedEpoch(long finishedEpoch) {
-        this.finishedEpoch = finishedEpoch;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -89,11 +86,77 @@ public class Series implements Serializable {
         this.title = title;
     }
 
-    public int getCurrentEpisode() {
-        return currentEpisode;
+    public int getScore() {
+        return score;
     }
 
-    public void setCurrentEpisode(int currentEpisode) {
-        this.currentEpisode = currentEpisode;
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public String getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
+    }
+
+    public String getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(String end_date) {
+        this.end_date = end_date;
+    }
+
+    public int getEpisodes_watched() {
+        return episodes_watched;
+    }
+
+    public void setEpisodes_watched(int episodes_watched) {
+        this.episodes_watched = episodes_watched;
+    }
+
+    public int getSeasons_watched() {
+        return seasons_watched;
+    }
+
+    public void setSeasons_watched(int seasons_watched) {
+        this.seasons_watched = seasons_watched;
+    }
+
+    public int getEpisode_runtime() {
+        return episode_runtime;
+    }
+
+    public void setEpisode_runtime(int episode_runtime) {
+        this.episode_runtime = episode_runtime;
+    }
+
+    public int getNumber_of_episodes() {
+        return number_of_episodes;
+    }
+
+    public void setNumber_of_episodes(int number_of_episodes) {
+        this.number_of_episodes = number_of_episodes;
+    }
+
+    public int getNumber_of_seasons() {
+        return number_of_seasons;
+    }
+
+    public void setNumber_of_seasons(int number_of_seasons) {
+        this.number_of_seasons = number_of_seasons;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Series) {
+            if (((Series)object).getId().equals(this.id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
