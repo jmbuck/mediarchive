@@ -29,19 +29,6 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public void saveLists(User user) {
-        this.mediaListRepository.save(user.getMediaCompleted());
-        this.mediaListRepository.save(user.getMediaUnderway());
-        this.mediaListRepository.save(user.getMediaIntent());
-    }
-
-    @Override
-    public void saveStats(Statistics s) {
-        System.out.println("SAVING STATS");
-        this.statisticsRepository.save(s);
-    }
-
-    @Override
     public List<Movie> getMovies(MediaList mediaList) {
         return this.movieRepository.findByMediaList(mediaList);
     }
@@ -160,25 +147,16 @@ public class MediaListServiceImpl implements MediaListService {
 
     @Override
     public Book addBook(MediaList mediaList, MediaDetails details) {
-        System.out.println("MEDIALIST " + mediaList);
-        System.out.println("DETAILS " + details);
-
         Book book = new Book(mediaList, 1, details);
-        System.out.println("BOOK " + book);
-        Book inRepo = bookRepository.findByMediaListAndIndex(mediaList, book.getIndex());
-        System.out.println("INREPO " + inRepo);
+        Book inRepo = bookRepository.findByMediaListAndId(mediaList, book.getId());
         if (inRepo != null) {
             removeBook(mediaList, inRepo.getId());
         }
-        System.out.println("AFTER IF");
-        Statistics s = this.statisticsRepository.findByMediaListAndIndex(mediaList, mediaList.stats().getIndex());
-        System.out.println("FINDING STATS " + s);
+        Statistics s = this.statisticsRepository.findByMediaList(mediaList);
         s.updateTotalBooks(1);
         s.updateTotalBookScore(book.getScore());
         s.updateTotalPages(book.getPage_count());
-        System.out.println("AFTER UPDATES");
         this.statisticsRepository.save(s);
-        System.out.println("AFTER STATS");
         return this.bookRepository.save(book);
     }
 

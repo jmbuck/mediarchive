@@ -51,12 +51,10 @@ public class UserServiceImpl implements UserService {
         User user = null;
         try {
             user = objectMapper.readValue(body, User.class);
-            User real = new User("testUserOne", "password", 1);
+            User real = new User(user.getUsername(), user.getPassword(), 1);
             if (getUser(real.getUsername()) == null) {
                 real.newLists();
-                this.mediaListService.saveLists(real);
                 this.userRepository.save(real);
-                this.mediaListService.saveStats(real.getMediaCompleted().stats());
                 logger.info("Successfully created new user " + real.getUsername());
             }
             else {
@@ -159,14 +157,10 @@ public class UserServiceImpl implements UserService {
         Book book = null;
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
-            System.out.println(details.toString());
-            System.out.println("OBJECT MAPPER");
             User user = getUser(username);
-            System.out.println("USER " + user);
-            System.out.println("USER MEDIALIST " + user.getMediaCompleted());
             book = mediaListService.addBook(user.getMediaCompleted(), details);
-            System.out.println("ADD BOOK");
             logger.info("Successfully added completed book to user " + username);
+            return book;
         } catch (IOException e) {
             logger.error("Could not parse JSON", e);
         }

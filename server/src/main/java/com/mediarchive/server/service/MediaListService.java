@@ -6,10 +6,6 @@ import java.util.List;
 
 public interface MediaListService {
 
-    void saveLists(User user);
-
-    void saveStats(Statistics s);
-
     List<Movie> getMovies(MediaList mediaList);
 
     List<Series> getSeries(MediaList mediaList);

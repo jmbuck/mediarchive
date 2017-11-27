@@ -18,16 +18,16 @@ public class MediaList implements Serializable {
     @OneToOne//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-    @OneToMany//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Movie> movies;
 
-    @OneToMany//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Series> series;
 
-    @OneToMany//(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Book> books;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Statistics statistics;
 
     protected MediaList() {
@@ -37,10 +37,5 @@ public class MediaList implements Serializable {
         this.user = user;
         this.index = index;
         statistics = new Statistics(this, 1);
-        System.out.println(statistics);
-    }
-
-    public Statistics stats() {
-        return statistics;
     }
 }
