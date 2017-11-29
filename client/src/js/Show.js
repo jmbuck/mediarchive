@@ -132,7 +132,7 @@ class Show extends Component {
 
         {
         show.genres && show.genres.length > 0
-        ? (<div className="genres">Genres:&nbsp;
+        ? (<div className="genres">{show.genres.length === 1 ? 'Genre' : 'Genres'}:&nbsp;
             {
                 show.genres.map((genre, i) => i !== show.genres.length-1 ? <span key={i}>{genre.name}, </span> : <span key={i}>{genre.name}</span>)
             }

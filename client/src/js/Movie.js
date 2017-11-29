@@ -17,7 +17,6 @@ class Movie extends Component {
   }
 
   fetchMovieInfo = (movie) => {
-    console.log('api call')
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
       .then(detailedMovie => {
@@ -62,7 +61,7 @@ class Movie extends Component {
         {
         movie.genres && movie.genres.length > 0
         ? (
-            <div className="genres">Genres:&nbsp;
+            <div className="genres">{movie.genres.length === 1 ? 'Genre' : 'Genres'}:&nbsp;
             {
                 movie.genres.map((genre, i) => i !== movie.genres.length-1 ? <span key={i}>{genre.name}, </span> : <span key={i}>{genre.name}</span>)
             }

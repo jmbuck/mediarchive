@@ -10,7 +10,7 @@
     text-decoration: inherit;
 }
 
-.Search a:hover {
+.Search .preview:hover {
     color: inherit;
     text-decoration: inherit;
 }
