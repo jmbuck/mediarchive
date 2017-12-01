@@ -12,7 +12,15 @@ class Movie extends Component {
       movie: this.props.movie,
       fetched: false,
       onForm: this.props.location.pathname !== `/search/movies/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.movie.id}` 
-              && this.props.location.pathname !== `/movies/:list/${this.props.movie.id}`
+              && this.props.location.pathname !== `/movies/${this.props.match.params.list}/${this.props.movie.id}`,
+      today: this.props.getToday(),
+      formPath: this.props.search ? `/search/movies/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.movie.id}/add`
+                                  : `/movies/${this.props.match.params.list}/${this.props.movie.id}/edit`,
+      infoPath: this.props.search ? `/search/movies/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.movie.id}`
+      : `/movies/${this.props.match.params.list}/${this.props.movie.id}`,
+      listPath: this.props.search ? `/search/movies/${this.props.match.params.query}/${this.props.match.params.page}`
+      : `/movies/${this.props.match.params.list}`,
+      displayMessage: false
     }
   }
 
@@ -37,6 +45,11 @@ class Movie extends Component {
     }
     return (
       <div className="movie-info">
+        {
+        this.state.displayMessage 
+        ? <div className="message">{this.state.message}</div>
+        : <div className="message"></div>
+        }
         {
         movie.overview 
         ? <div className="synopsis">Synopsis: {movie.overview}</div>
@@ -82,18 +95,11 @@ class Movie extends Component {
   //Confirmation to user of a successful add
   //Actually implement submit
   renderMovieForm = (movie) => {
-    let today = new Date()
-    let dd = today.getDate()
-    let mm = today.getMonth()+1
-    let yyyy = today.getFullYear()
-    if(dd < 10) dd = '0' + dd
-    if(mm < 10) mm = '0' + mm
-    today = `${yyyy}-${mm}-${dd}`
-
     return (
         <form className="MovieForm" onSubmit={(ev) => {
             ev.preventDefault();
-            this.props.addMovie(ev, movie)
+            const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, movie)
+            this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
         }}>
             <div className="fields">
                 <div className="category">
@@ -104,10 +110,10 @@ class Movie extends Component {
                     <div className="date">
                     Date watched: 
                     <a onClick={() => {
-                        document.querySelector('.optional input').value = today
+                        document.querySelector('.optional input').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" name="date" max={today}/>
+                    <input type="date" name="date" max={this.state.today}/>
                     </div>
                     <select name="score">
                         <option value="">-- Score --</option>
@@ -139,33 +145,37 @@ class Movie extends Component {
             ? <img src={path} alt="movie poster" />
             : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="movie poster" />
           }
-          <Route exact path={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`} render={(navProps) => {
+          <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderMovieInfo(movie);
           }}/>
 
-          <Route path={this.props.search ? `/search/movies/${query}/${page}/${movie.id}/add` : `/movies/:list/${movie.id}/edit`} render={(navProps) => {
+          <Route path={this.state.formPath} render={(navProps) => {
             return this.renderMovieForm(movie);
           }}/>
 
           <button className="btn btn-primary" 
             onClick={() => {
+
               if(this.state.onForm) {
-                this.props.history.push(this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`)
+                this.props.history.push(this.state.infoPath)
               } else {
-                this.props.history.push(this.props.search ? `/search/movies/${query}/${page}/${movie.id}/add` : `/movies/:list/${movie.id}/edit`)
+                this.props.history.push(this.state.formPath)
               }
-              this.setState({onForm: !this.state.onForm})
+              this.setState({onForm: !this.state.onForm, displayMessage: false})
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
           <button className="btn btn-primary" 
-            onClick={() => this.props.history.push(this.props.search ? `/search/movies/${query}/${page}` : `/movies/:list`)}
+            onClick={() => { 
+              this.setState({displayMessage: false})
+              this.props.history.push(this.state.listPath)
+            }}
           >Close</button>
-
         </div>
 
-        <div className="black-overlay" onClick={(ev) => {
-          this.props.history.push(this.props.search ? `/search/movies/${query}/${page}` : `/movies/:list`)
+        <div className="black-overlay" onClick={() => { 
+              this.setState({displayMessage: false})
+              this.props.history.push(this.state.listPath)
         }}></div>
       </div>
       )
@@ -179,13 +189,13 @@ class Movie extends Component {
 
     return (
       <li className="Movie">
-        <Route path={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`} render={(navProps) => {
+        <Route path={this.state.infoPath} render={(navProps) => {
           if(!this.state.fetched) this.fetchMovieInfo(movie)
           return this.renderMovie(navProps, movie, query, page) 
         }}/>
 
         <Link 
-          to={this.props.search ? `/search/movies/${query}/${page}/${movie.id}` : `/movies/:list/${movie.id}`}
+          to={this.state.infoPath}
           onClick={() => {this.setState({onForm: false})}}
           className="preview"
         >

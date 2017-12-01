@@ -12,7 +12,8 @@ class Book extends Component {
       book: this.props.book,
       fetched: false,
       onForm: this.props.location.pathname !== `/search/books/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.book.id}` 
-              && this.props.location.pathname !== `/books/:list/${this.props.book.id}`
+              && this.props.location.pathname !== `/books/:list/${this.props.book.id}`,
+      today: this.props.getToday(),
     }
   }
 
@@ -28,14 +29,6 @@ class Book extends Component {
   }
 
   renderBookForm = (book) => {
-  let today = new Date()
-  let dd = today.getDate()
-  let mm = today.getMonth()+1
-  let yyyy = today.getFullYear()
-  if(dd < 10) dd = '0' + dd
-  if(mm < 10) mm = '0' + mm
-  today = `${yyyy}-${mm}-${dd}`
-
    return (
     <form className="book-form" onSubmit={(ev) => {
       ev.preventDefault();
@@ -51,18 +44,18 @@ class Book extends Component {
               <div className="start-date">
               Start date: 
               <a onClick={() => {
-                  document.querySelector('.optional .start').value = today
+                  document.querySelector('.optional .start').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="start" name="start_date" max={today}/>
+              <input type="date" className="start" name="start_date" max={this.state.today}/>
               </div>
               <div className="end-date">
               End date: 
               <a onClick={() => {
-                  document.querySelector('.optional .end').value = today
+                  document.querySelector('.optional .end').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="end" name="end_date" max={today}/>
+              <input type="date" className="end" name="end_date" max={this.state.today}/>
               </div>
                  <select name="score">
                   <option value="">-- Score --</option>
@@ -173,7 +166,7 @@ class Book extends Component {
     const path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
 
     return (
-      <li className="Show">
+      <li className="Book">
        <Route path={this.props.search ? `/search/books/${query}/${page}/${book.id}` : `/books/:list/${book.id}`} render={(navProps) => {
           if(!this.state.fetched) this.fetchBookInfo(book)
           return this.renderBook(navProps, book, query, page) 

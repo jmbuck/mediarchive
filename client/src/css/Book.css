@@ -1,0 +1,15 @@
+.Book {
+    margin: 1rem;
+}
+
+.Book .preview img {
+    height: 264px;
+    width: 185px;
+}
+
+.Book .preview .title {
+    width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -5,6 +5,15 @@ import Main from './Main'
 import '../css/App.css'
 
 class App extends Component {
+  constructor() {
+    super()
+    this.state = {
+      user: null,
+      books: {},
+      movies: {},
+      shows: {},
+    }
+  }
   
   signedIn = () => {
     return true;
@@ -28,8 +37,65 @@ class App extends Component {
     return output
   }
 
-  addMovie = (ev, movie) => {
-    console.log('add movie')
+  getToday = () => {
+    let today = new Date()
+    let dd = today.getDate()
+    let mm = today.getMonth()+1
+    let yyyy = today.getFullYear()
+    if(dd < 10) dd = '0' + dd
+    if(mm < 10) mm = '0' + mm
+    return `${yyyy}-${mm}-${dd}`
+  }
+
+  isDuplicate = (item, media) => {
+    if(media === 'movie') {
+      const movies = {...this.state.movies}
+      if(movies['completed'] && movies['completed'][`movie-${item.id}`]) {
+        return `${item.title} already exists in your completed list!`
+      } else if(movies['planning'] && movies['planning'][`movie-${item.id}`]) {
+        return `${item.title} already exists in your plan to watch list!`
+      }
+    } else if(media === 'book') {
+      const books = {...this.state.books}
+      if(books['completed'] && books['completed'][`book-${item.id}`]) {
+        return `${item.volumeInfo.title} already exists in your completed list!`
+      } else if(books['planning'] && books['planning'][`book-${item.id}`]) {
+        return `${item.volumeInfo.title} already exists in your plan to read list!`
+      } else if(books['reading'] && books['reading'][`book-${item.id}`]) {
+        return `${item.volumeInfo.title} already exists in your reading list!`
+      }
+    } else if(media === 'show') {
+      const shows = {...this.state.shows}
+      if(shows['completed'] && shows['completed'][`show-${item.id}`]) {
+        return `${item.name} already exists in your completed list!`
+      } else if(shows['planning'] && shows['planning'][`show-${item.id}`]) {
+        return `${item.name} already exists in your plan to watch list!`
+      } else if(shows['watching'] && shows['watching'][`show-${item.id}`]) {
+        return `${item.name} already exists in your watching list!`
+      }
+    } 
+    return false;
+  }
+
+  addMovie = (category, date, score, movie) => {
+    const movies = {...this.state.movies}
+    if(!movies[category]) {
+      movies[category] = {}
+    }
+    let message;
+    if(!(message = this.isDuplicate(movie, 'movie'))) {
+      movies[category][`movie-${movie.id}`] = {}
+      movies[category][`movie-${movie.id}`].watched_date = date ? date : ""
+      movies[category][`movie-${movie.id}`].score = score ? score : 0
+      movies[category][`movie-${movie.id}`].runtime = movie.runtime ? movie.runtime : 0
+      movies[category][`movie-${movie.id}`].id = movie.id
+      movies[category][`movie-${movie.id}`].title = movie.title
+      this.setState({movies})
+
+      message = `${movie.title} successfully added to list!`
+      console.log(movies)
+    }
+    return message;
   }
 
   addShow = (ev, show) => {
@@ -47,7 +113,11 @@ class App extends Component {
           <Route path="/" render={() =>
               this.signedIn() 
               ? <Main 
-                  formatDuration={this.formatDuration} 
+                  movies={this.state.movies}
+                  shows={this.state.shows}
+                  books={this.state.books}
+                  formatDuration={this.formatDuration}
+                  getToday={this.getToday}
                   addMovie={this.addMovie}
                   addShow={this.addShow}
                   addBook={this.addBook}               

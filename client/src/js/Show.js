@@ -12,7 +12,8 @@ class Show extends Component {
       show: this.props.show,
       fetched: false,
       onForm: this.props.location.pathname !== `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.show.id}` 
-              && this.props.location.pathname !== `/tv/:list/${this.props.show.id}`
+              && this.props.location.pathname !== `/tv/:list/${this.props.show.id}`,
+      today: this.props.getToday(),
     }
   }
 
@@ -28,14 +29,6 @@ class Show extends Component {
   }
 
   renderShowForm = (show) => {
-    let today = new Date()
-    let dd = today.getDate()
-    let mm = today.getMonth()+1
-    let yyyy = today.getFullYear()
-    if(dd < 10) dd = '0' + dd
-    if(mm < 10) mm = '0' + mm
-    today = `${yyyy}-${mm}-${dd}`
-
     return (
         <form className="ShowForm" onSubmit={(ev) => {
             ev.preventDefault();
@@ -51,18 +44,18 @@ class Show extends Component {
                     <div className="start-date">
                     Start date: 
                     <a onClick={() => {
-                        document.querySelector('.optional .start').value = today
+                        document.querySelector('.optional .start').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" className="start" name="start_date" max={today}/>
+                    <input type="date" className="start" name="start_date" max={this.state.today}/>
                     </div>
                     <div className="end-date">
                     End date: 
                     <a onClick={() => {
-                        document.querySelector('.optional .end').value = today
+                        document.querySelector('.optional .end').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" className="end" name="end_date" max={today}/>
+                    <input type="date" className="end" name="end_date" max={this.state.today}/>
                     </div>
                     Current season:
                     <input type="number" name="curr_season" min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
