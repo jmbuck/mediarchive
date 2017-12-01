@@ -14,6 +14,13 @@ class Show extends Component {
       onForm: this.props.location.pathname !== `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.show.id}` 
               && this.props.location.pathname !== `/tv/:list/${this.props.show.id}`,
       today: this.props.getToday(),
+      formPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.show.id}/add`
+      : `/tv/${this.props.match.params.list}/${this.props.show.id}/edit`,
+      infoPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.show.id}`
+      : `/tv/${this.props.match.params.list}/${this.props.show.id}`,
+      listPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}`
+      : `/tv/${this.props.match.params.list}`,
+      displayMessage: false
     }
   }
 
@@ -32,7 +39,8 @@ class Show extends Component {
     return (
         <form className="ShowForm" onSubmit={(ev) => {
             ev.preventDefault();
-            this.props.addShow(ev, show)
+            const message = this.props.addShow(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, show)
+            this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
         }}>
             <div className="fields">
                 <div className="category">
@@ -94,6 +102,12 @@ class Show extends Component {
     return (
       <div className="show-info">
         {
+        this.state.displayMessage 
+        ? <div className="message">{this.state.message}</div>
+        : <div className="message"></div>
+        }
+
+        {
         show.overview 
         ? <div className="synopsis">Synopsis: {show.overview}</div>
         : <div className="synopsis">No synopsis available.</div>
@@ -152,33 +166,37 @@ class Show extends Component {
             ? <img src={path} alt="TV show poster" />
             : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
           }
-          <Route exact path={this.props.search ? `/search/tv/${query}/${page}/${show.id}` : `/tv/:list/${show.id}`} render={(navProps) => {
+          <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderShowInfo(show);
           }}/>
 
-          <Route path={this.props.search ? `/search/tv/${query}/${page}/${show.id}/add` : `/tv/:list/${show.id}/edit`} render={(navProps) => {
+          <Route path={this.state.formPath} render={(navProps) => {
             return this.renderShowForm(show);
           }}/>
 
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({onForm: !this.state.onForm})
+              this.setState({onForm: !this.state.onForm, displayMessage: false})
               if(this.state.onForm) {
-                this.props.history.push(this.props.search ? `/search/tv/${query}/${page}/${show.id}` : `/tv/:list/${show.id}`)
+                this.props.history.push(this.state.infoPath)
               } else {
-                this.props.history.push(this.props.search ? `/search/tv/${query}/${page}/${show.id}/add` : `/tv/:list/${show.id}/edit`)
+                this.props.history.push(this.state.formPath)
               }
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
           <button className="btn btn-primary" 
-            onClick={() => this.props.history.push(this.props.search ? `/search/tv/${query}/${page}` : `/tv/:list`)}
+            onClick={() => {
+              this.setState({displayMessage: false})
+              this.props.history.push(this.state.listPath)
+            }}
           >Close</button>
 
         </div>
 
-        <div className="black-overlay" onClick={(ev) => {
-          this.props.history.push(this.props.search ? `/search/tv/${query}/${page}` : `/tv/:list`)
+        <div className="black-overlay" onClick={() => {
+          this.setState({displayMessage: false})
+          this.props.history.push(this.state.listPath)
         }}></div>
       </div>
       )
@@ -192,12 +210,12 @@ class Show extends Component {
 
     return (
       <li className="Show">
-       <Route path={this.props.search ? `/search/tv/${query}/${page}/${show.id}` : `/tv/:list/${show.id}`} render={(navProps) => {
+       <Route path={this.state.infoPath} render={(navProps) => {
           if(!this.state.fetched) this.fetchShowInfo(show)
           return this.renderShow(navProps, show, query, page) 
        }}/>
         <Link 
-          to={this.props.search ? `/search/tv/${query}/${page}/${show.id}` : `/tv/:list/${show.id}`}
+          to={this.state.infoPath}
           onClick={() => {this.setState({onForm: false})}}
           className="preview"
         >

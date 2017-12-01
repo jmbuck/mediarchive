@@ -14,7 +14,7 @@ class App extends Component {
       shows: {},
     }
   }
-  
+
   signedIn = () => {
     return true;
   }
@@ -82,24 +82,42 @@ class App extends Component {
     if(!movies[category]) {
       movies[category] = {}
     }
-    let message;
-    if(!(message = this.isDuplicate(movie, 'movie'))) {
+    
+    let message = this.isDuplicate(movie, 'movie')
+    if(!message) {
       movies[category][`movie-${movie.id}`] = {}
       movies[category][`movie-${movie.id}`].watched_date = date ? date : ""
-      movies[category][`movie-${movie.id}`].score = score ? score : 0
+      movies[category][`movie-${movie.id}`].score = score ? parseInt(score, 10) : 0
       movies[category][`movie-${movie.id}`].runtime = movie.runtime ? movie.runtime : 0
       movies[category][`movie-${movie.id}`].id = movie.id
       movies[category][`movie-${movie.id}`].title = movie.title
       this.setState({movies})
 
       message = `${movie.title} successfully added to list!`
-      console.log(movies)
     }
     return message;
   }
 
-  addShow = (ev, show) => {
-    console.log('add show')
+  addShow = (category, start_date, end_date, score, show) => {
+    const shows = {...this.state.shows}
+    if(!shows[category]) {
+      shows[category] = {}
+    }
+    
+    let message = this.isDuplicate(show, 'show')
+    if(!message) {
+      shows[category][`show-${show.id}`] = {}
+      shows[category][`show-${show.id}`].start_date = start_date ? start_date : ""
+      shows[category][`show-${show.id}`].end_date = end_date ? end_date : ""
+      shows[category][`show-${show.id}`].score = score ? parseInt(score, 10) : 0
+      //shows[category][`show-${show.id}`].runtime = show.runtime ? show.runtime : 0
+      shows[category][`show-${show.id}`].id = show.id
+      shows[category][`show-${show.id}`].title = show.name
+      this.setState({shows})
+      console.log(shows)
+      message = `${show.name} successfully added to list!`
+    }
+    return message;
   }
 
   addBook = (ev, book) => {
