@@ -14,6 +14,13 @@ class Book extends Component {
       onForm: this.props.location.pathname !== `/search/books/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.book.id}` 
               && this.props.location.pathname !== `/books/:list/${this.props.book.id}`,
       today: this.props.getToday(),
+      formPath: this.props.search ? `/search/books/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.book.id}/add`
+      : `/books/${this.props.match.params.list}/${this.props.book.id}/edit`,
+      infoPath: this.props.search ? `/search/books/${this.props.match.params.query}/${this.props.match.params.page}/${this.props.book.id}`
+      : `/books/${this.props.match.params.list}/${this.props.book.id}`,
+      listPath: this.props.search ? `/search/books/${this.props.match.params.query}/${this.props.match.params.page}`
+      : `/books/${this.props.match.params.list}`,
+      displayMessage: false
     }
   }
 
@@ -32,7 +39,8 @@ class Book extends Component {
    return (
     <form className="book-form" onSubmit={(ev) => {
       ev.preventDefault();
-      this.props.addBook(ev, book)
+      const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, book)
+      this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
     }}>
       <div className="fields">
           <div className="category">
@@ -81,6 +89,12 @@ class Book extends Component {
     return (
       <div className="book-info">
         {
+        this.state.displayMessage 
+        ? <div className="message">{this.state.message}</div>
+        : <div className="message"></div>
+        }
+
+        {
         book.volumeInfo.authors && book.volumeInfo.authors.length > 0
         ? (<div className="authors">{book.volumeInfo.authors.length === 1 ? 'Author' : 'Authors'}:&nbsp;
             {
@@ -127,33 +141,37 @@ class Book extends Component {
             ? <img src={path} alt="book cover" />
             : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
           }
-          <Route exact path={this.props.search ? `/search/books/${query}/${page}/${book.id}` : `/books/:list/${book.id}`} render={(navProps) => {
+          <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderBookInfo(book);
           }}/>
 
-          <Route path={this.props.search ? `/search/books/${query}/${page}/${book.id}/add` : `/books/:list/${book.id}/edit`} render={(navProps) => {
+          <Route path={this.state.formPath} render={(navProps) => {
             return this.renderBookForm(book);
           }}/>
 
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({onForm: !this.state.onForm})
+              this.setState({onForm: !this.state.onForm, displayMessage: false})
               if(this.state.onForm) {
-                this.props.history.push(this.props.search ? `/search/books/${query}/${page}/${book.id}` : `/books/:list/${book.id}`)
+                this.props.history.push(this.state.infoPath)
               } else {
-                this.props.history.push(this.props.search ? `/search/books/${query}/${page}/${book.id}/add` : `/books/:list/${book.id}/edit`)
+                this.props.history.push(this.state.formPath)
               }
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
           <button className="btn btn-primary" 
-            onClick={() => this.props.history.push(this.props.search ? `/search/books/${query}/${page}` : `/books/:list`)}
+            onClick={() => {
+              this.setState({displayMessage: false})
+              this.props.history.push(this.state.listPath)}
+            }
           >Close</button>
 
         </div>
 
         <div className="black-overlay" onClick={(ev) => {
-          this.props.history.push(this.props.search ? `/search/books/${query}/${page}` : `/books/:list`)
+          this.setState({displayMessage: false})
+          this.props.history.push(this.state.listPath)
         }}></div>
       </div>
       )
@@ -167,12 +185,12 @@ class Book extends Component {
 
     return (
       <li className="Book">
-       <Route path={this.props.search ? `/search/books/${query}/${page}/${book.id}` : `/books/:list/${book.id}`} render={(navProps) => {
+       <Route path={this.state.infoPath} render={(navProps) => {
           if(!this.state.fetched) this.fetchBookInfo(book)
           return this.renderBook(navProps, book, query, page) 
        }}/>
         <Link 
-          to={this.props.search ? `/search/books/${query}/${page}/${book.id}` : `/books/:list/${book.id}`}
+          to={this.state.infoPath}
           onClick={() => {this.setState({onForm: false})}}
           className="preview"
         >
@@ -181,7 +199,7 @@ class Book extends Component {
             {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
               path 
               ? <img src={path} alt="book cover" />
-              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="movie poster" />
+              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="book cover" />
             }
           </div>
         </Link>

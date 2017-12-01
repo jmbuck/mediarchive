@@ -20,7 +20,8 @@ class Show extends Component {
       : `/tv/${this.props.match.params.list}/${this.props.show.id}`,
       listPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}`
       : `/tv/${this.props.match.params.list}`,
-      displayMessage: false
+      displayMessage: false,
+      watching: false
     }
   }
 
@@ -35,18 +36,42 @@ class Show extends Component {
     })
   }
 
+  getEpisodeCount = (show, currSeason, episode) => {
+    currSeason = currSeason ? currSeason.value : 0
+    episode = episode ? episode.value : 0
+    let episodes = show.seasons.reduce((episodes, season) => {
+      if(season.season_number !== 0 && season.season_number < currSeason) {
+        episodes += season.episode_count
+      }
+      return episodes
+    }, 0)
+    episodes += currSeason ? episode : 0
+    return episodes
+  }
+
   renderShowForm = (show) => {
     return (
         <form className="ShowForm" onSubmit={(ev) => {
             ev.preventDefault();
-            const message = this.props.addShow(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, show)
+            const completed = ev.target.category.value === 'completed'
+            const info = {
+              episodes_watched: completed ? show.number_of_episodes : this.getEpisodeCount(show, ev.target.curr_season, ev.target.curr_episode),
+              seasons_watched: completed ? show.number_of_seasons : ev.target.curr_season ? parseInt(ev.target.curr_season.value, 10)-1 : 0,
+              start_date: ev.target.start_date.value,
+              end_date: ev.target.end_date.value,
+              score: ev.target.score.value,
+              mean_episode_run_time: show.episode_run_time ? Math.min(...show.episode_run_time) : 0,
+              number_of_episodes: show.number_of_episodes,
+              number_of_seasons: show.number_of_seasons,
+            }
+            const message = this.props.addShow(show, ev.target.category.value, info)
             this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
         }}>
             <div className="fields">
                 <div className="category">
-                    <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
-                    <input type="radio" name="category" value="watching" defaultChecked={false}/>Watching<br/>
-                    <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Watch<br/>
+                    <input type="radio" name="category" value="completed" defaultChecked={true} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
+                    <input type="radio" name="category" className="watching" value="watching" defaultChecked={false} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
+                    <input type="radio" name="category" value="planning" defaultChecked={false} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
                 </div>
                 <div className="optional">
                     <div className="start-date">
@@ -65,12 +90,20 @@ class Show extends Component {
                     </a>
                     <input type="date" className="end" name="end_date" max={this.state.today}/>
                     </div>
-                    Current season:
-                    <input type="number" name="curr_season" min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
-                    Episode in current season:
-                    <input type="number" name="curr_episodes" min="1" max={show.seasons && show.seasons.length > 0 
-                                                                           ? show.seasons.reduce((a, b) => Math.max(a, b.episode_count), 0)
-                                                                           : 100 }/>
+
+                    {
+                    this.state.watching
+                    ? (<div className="episodes-watched">
+                        Current season:
+                        <input type="number" name="curr_season" min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
+                        Episode in current season:
+                        <input type="number" name="curr_episode" min="1" max={show.seasons && show.seasons.length > 0 
+                                                                                ? show.seasons.reduce((a, b) => Math.max(a, b.episode_count), 0)
+                                                                                : 100 }/>
+                      </div>)
+                    : <div className="episodes-watched"></div>
+                    }
+                   
                     <select name="score">
                         <option value="">-- Score --</option>
                         <option value="10">10</option>
@@ -221,10 +254,10 @@ class Show extends Component {
         >
           <div className="preview">
             <div className="title" title={show.name}>{show.name}</div>
-            {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
+            {/*Displays show poster. If poster does not exist, show "poster does not exist" image*/
               show.poster_path 
-              ? <img src={path} alt="movie poster" />
-              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="movie poster" />
+              ? <img src={path} alt="TV show poster" />
+              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
             }
           </div>
         </Link>

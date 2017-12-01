@@ -98,7 +98,7 @@ class App extends Component {
     return message;
   }
 
-  addShow = (category, start_date, end_date, score, show) => {
+  addShow = (show, category, info) => {
     const shows = {...this.state.shows}
     if(!shows[category]) {
       shows[category] = {}
@@ -107,10 +107,14 @@ class App extends Component {
     let message = this.isDuplicate(show, 'show')
     if(!message) {
       shows[category][`show-${show.id}`] = {}
-      shows[category][`show-${show.id}`].start_date = start_date ? start_date : ""
-      shows[category][`show-${show.id}`].end_date = end_date ? end_date : ""
-      shows[category][`show-${show.id}`].score = score ? parseInt(score, 10) : 0
-      //shows[category][`show-${show.id}`].runtime = show.runtime ? show.runtime : 0
+      shows[category][`show-${show.id}`].start_date = info.start_date ? info.start_date : ""
+      shows[category][`show-${show.id}`].end_date = info.end_date ? info.end_date : ""
+      shows[category][`show-${show.id}`].score = info.score ? parseInt(info.score, 10) : 0
+      shows[category][`show-${show.id}`].mean_episode_run_time = info.mean_episode_run_time
+      shows[category][`show-${show.id}`].episodes_watched = info.episodes_watched
+      shows[category][`show-${show.id}`].seasons_watched = info.seasons_watched
+      shows[category][`show-${show.id}`].number_of_episodes = info.number_of_episodes ? info.number_of_episodes : 0
+      shows[category][`show-${show.id}`].number_of_seasons = info.number_of_seasons ? info.number_of_seasons : 0
       shows[category][`show-${show.id}`].id = show.id
       shows[category][`show-${show.id}`].title = show.name
       this.setState({shows})
@@ -120,8 +124,26 @@ class App extends Component {
     return message;
   }
 
-  addBook = (ev, book) => {
-    console.log('add book')
+  addBook = (category, start_date, end_date, score, book) => {
+    const books = {...this.state.books}
+    if(!books[category]) {
+      books[category] = {}
+    }
+    
+    let message = this.isDuplicate(book, 'book')
+    if(!message) {
+      books[category][`book-${book.id}`] = {}
+      books[category][`book-${book.id}`].start_date = start_date ? start_date : ""
+      books[category][`book-${book.id}`].end_date = end_date ? end_date : ""
+      books[category][`book-${book.id}`].score = score ? parseInt(score, 10) : 0
+      books[category][`book-${book.id}`].pageCount = book.volumeInfo.printedPageCount ? book.volumeInfo.printedPageCount : 0
+      books[category][`book-${book.id}`].id = book.id
+      books[category][`book-${book.id}`].title = book.volumeInfo.title
+      this.setState({books})
+  
+      message = `${book.volumeInfo.title} successfully added to list!`
+    }
+    return message;
   }
 
   render() {
