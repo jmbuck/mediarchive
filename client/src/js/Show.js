@@ -25,6 +25,10 @@ class Show extends Component {
     }
   }
 
+  componentDidMount = () => {
+    this.fetchShowInfo(this.state.show)
+  }
+
   fetchShowInfo = (show) => {
     fetch(`https://api.themoviedb.org/3/tv/${show.id}?api_key=${TMDBKey}&append_to_response=credits`)
     .then(response => response.json())
@@ -37,8 +41,8 @@ class Show extends Component {
   }
 
   getEpisodeCount = (show, currSeason, episode) => {
-    currSeason = currSeason ? currSeason.value : 0
-    episode = episode ? episode.value : 0
+    currSeason = currSeason ? parseInt(currSeason.value, 10) : 0
+    episode = episode ? parseInt(episode.value, 10) : 0
     let episodes = show.seasons.reduce((episodes, season) => {
       if(season.season_number !== 0 && season.season_number < currSeason) {
         episodes += season.episode_count
@@ -70,7 +74,7 @@ class Show extends Component {
             <div className="fields">
                 <div className="category">
                     <input type="radio" name="category" value="completed" defaultChecked={true} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
-                    <input type="radio" name="category" className="watching" value="watching" defaultChecked={false} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
+                    <input type="radio" name="category" className="watching" value="current" defaultChecked={false} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
                     <input type="radio" name="category" value="planning" defaultChecked={false} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
                 </div>
                 <div className="optional">
@@ -244,8 +248,10 @@ class Show extends Component {
     return (
       <li className="Show">
        <Route path={this.state.infoPath} render={(navProps) => {
-          if(!this.state.fetched) this.fetchShowInfo(show)
+        if(this.state.fetched) {
           return this.renderShow(navProps, show, query, page) 
+        }
+        return <div>Fetching show info...</div>
        }}/>
         <Link 
           to={this.state.infoPath}

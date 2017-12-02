@@ -1,0 +1,16 @@
+.List .media-list {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+}
+
+.List .preview {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.List .preview:hover {
+    color: inherit;
+    text-decoration: inherit;
+}

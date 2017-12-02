@@ -24,6 +24,10 @@ class Book extends Component {
     }
   }
 
+  componentDidMount = () => {
+    this.fetchBookInfo(this.state.book)
+  }
+
   fetchBookInfo = (book) => {
     fetch(`https://www.googleapis.com/books/v1/volumes/${book.id}?key=${booksKey}`)
     .then(response => response.json())
@@ -45,7 +49,7 @@ class Book extends Component {
       <div className="fields">
           <div className="category">
               <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
-              <input type="radio" name="category" value="reading" defaultChecked={false}/>Reading<br/>
+              <input type="radio" name="category" value="current" defaultChecked={false}/>Reading<br/>
               <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Read<br/>
           </div>
           <div className="optional">
@@ -132,7 +136,7 @@ class Book extends Component {
   }
 
   renderBook = (navProps, book, query, page) => {
-    const path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
     return (
       <div>
         <div className="white-content">
@@ -181,13 +185,15 @@ class Book extends Component {
     const query = this.props.match.params.query
     const page = this.props.match.params.page
     const book = {...this.state.book}
-    const path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
 
     return (
       <li className="Book">
        <Route path={this.state.infoPath} render={(navProps) => {
-          if(!this.state.fetched) this.fetchBookInfo(book)
-          return this.renderBook(navProps, book, query, page) 
+          if(this.state.fetched) {
+            return this.renderBook(navProps, book, query, page) 
+          }
+          return <div>Fetching book info...</div>
        }}/>
         <Link 
           to={this.state.infoPath}
@@ -195,7 +201,7 @@ class Book extends Component {
           className="preview"
         >
           <div className="preview">
-            <div className="title" title={book.volumeInfo.title}>{book.volumeInfo.title}</div>
+            <div className="title" title={book.title ? book.title : book.volumeInfo.title}>{book.title ? book.title : book.volumeInfo.title}</div>
             {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
               path 
               ? <img src={path} alt="book cover" />

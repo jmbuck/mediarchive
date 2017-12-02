@@ -24,6 +24,10 @@ class Movie extends Component {
     }
   }
 
+  componentDidMount = () => {
+    this.fetchMovieInfo(this.state.movie)
+  }
+
   fetchMovieInfo = (movie) => {
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
@@ -92,8 +96,7 @@ class Movie extends Component {
   }
 
   //TODO: Default values on edit form
-  //Confirmation to user of a successful add
-  //Actually implement submit
+  //EDIT
   renderMovieForm = (movie) => {
     return (
         <form className="MovieForm" onSubmit={(ev) => {
@@ -190,8 +193,10 @@ class Movie extends Component {
     return (
       <li className="Movie">
         <Route path={this.state.infoPath} render={(navProps) => {
-          if(!this.state.fetched) this.fetchMovieInfo(movie)
-          return this.renderMovie(navProps, movie, query, page) 
+          if(this.state.fetched) {
+            return this.renderMovie(navProps, movie, query, page) 
+          }
+          return <div>Fetching movie info...</div>
         }}/>
 
         <Link 

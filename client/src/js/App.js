@@ -12,6 +12,17 @@ class App extends Component {
       books: {},
       movies: {},
       shows: {},
+      fetchedMovies: false,
+      fetchedBooks: false,
+      fetchedShows: false,
+    }
+  }
+
+  componentDidMount = () => {
+    if(this.signedIn()) {
+      this.fetchMovieList(this.state.user)
+      this.fetchShowList(this.state.user)
+      this.fetchBookList(this.state.user)
     }
   }
 
@@ -91,6 +102,7 @@ class App extends Component {
       movies[category][`movie-${movie.id}`].runtime = movie.runtime ? movie.runtime : 0
       movies[category][`movie-${movie.id}`].id = movie.id
       movies[category][`movie-${movie.id}`].title = movie.title
+      movies[category][`movie-${movie.id}`].poster_path = movie.poster_path
       this.setState({movies})
 
       message = `${movie.title} successfully added to list!`
@@ -116,9 +128,10 @@ class App extends Component {
       shows[category][`show-${show.id}`].number_of_episodes = info.number_of_episodes ? info.number_of_episodes : 0
       shows[category][`show-${show.id}`].number_of_seasons = info.number_of_seasons ? info.number_of_seasons : 0
       shows[category][`show-${show.id}`].id = show.id
-      shows[category][`show-${show.id}`].title = show.name
+      shows[category][`show-${show.id}`].name = show.name
+      shows[category][`show-${show.id}`].poster_path = show.poster_path
       this.setState({shows})
-      console.log(shows)
+      
       message = `${show.name} successfully added to list!`
     }
     return message;
@@ -139,11 +152,24 @@ class App extends Component {
       books[category][`book-${book.id}`].pageCount = book.volumeInfo.printedPageCount ? book.volumeInfo.printedPageCount : 0
       books[category][`book-${book.id}`].id = book.id
       books[category][`book-${book.id}`].title = book.volumeInfo.title
+      books[category][`book-${book.id}`].path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
       this.setState({books})
-  
+      
       message = `${book.volumeInfo.title} successfully added to list!`
     }
     return message;
+  }
+
+  fetchMovieList = (user) => {
+    this.setState({fetchedMovies: true})
+  }
+
+  fetchShowList = (user) => {
+    this.setState({fetchedShows: true})
+  }
+
+  fetchBookList = (user) => {
+    this.setState({fetchedBooks: true})
   }
 
   render() {
@@ -157,6 +183,9 @@ class App extends Component {
                   shows={this.state.shows}
                   books={this.state.books}
                   formatDuration={this.formatDuration}
+                  fetchedMovies={this.state.fetchedMovies}
+                  fetchedShows={this.state.fetchedShows}
+                  fetchedBooks={this.state.fetchedBooks}
                   getToday={this.getToday}
                   addMovie={this.addMovie}
                   addShow={this.addShow}
