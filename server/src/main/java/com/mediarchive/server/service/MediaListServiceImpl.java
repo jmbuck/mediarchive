@@ -72,8 +72,14 @@ public class MediaListServiceImpl implements MediaListService {
         }
         Statistics s = this.statisticsRepository.findByMediaList(mediaList);
         s.updateTotalMovies(1);
-        s.updateTotalMovieRuntime(movie.getRuntime());
-        s.updateTotalMovieScore(movie.getScore());
+        if (movie.getRuntime() > 0) {
+            s.updateTotalMovieRuntime(movie.getRuntime());
+            s.updateTotalMovieRuntimeCount(1);
+        }
+        if (movie.getScore() > 0) {
+            s.updateTotalMovieScore(movie.getScore());
+            s.updateTotalMovieScoreCount(1);
+        }
         this.statisticsRepository.save(s);
         return this.movieRepository.save(movie);
     }
@@ -84,8 +90,14 @@ public class MediaListServiceImpl implements MediaListService {
         if (movie != null) {
             Statistics s = this.statisticsRepository.findByMediaList(mediaList);
             s.updateTotalMovies(-1);
-            s.updateTotalMovieRuntime(-movie.getRuntime());
-            s.updateTotalMovieScore(-movie.getScore());
+            if (movie.getRuntime() > 0) {
+                s.updateTotalMovieRuntime(-movie.getRuntime());
+                s.updateTotalMovieRuntimeCount(-1);
+            }
+            if (movie.getScore() > 0) {
+                s.updateTotalMovieScore(-movie.getScore());
+                s.updateTotalMovieScoreCount(-1);
+            }
             this.statisticsRepository.save(s);
             this.movieRepository.delete(movie);
         }
@@ -101,10 +113,16 @@ public class MediaListServiceImpl implements MediaListService {
         }
         Statistics s = this.statisticsRepository.findByMediaList(mediaList);
         s.updateTotalShows(1);
-        s.updateTotalShowScore(series.getScore());
+        if (series.getScore() > 0) {
+            s.updateTotalShowScoreCount(1);
+            s.updateTotalShowScore(series.getScore());
+        }
         s.updateTotalEpisodes(series.getEpisodes_watched());
         s.updateTotalSeasons(series.getSeasons_watched());
-        s.updateTotalShowRuntime(series.getEpisode_runtime() * series.getEpisodes_watched());
+        if (series.getEpisode_runtime() > 0) {
+            s.updateTotalShowRuntime(series.getEpisode_runtime() * series.getEpisodes_watched());
+            s.updateTotalShowRuntimeCount(series.getEpisodes_watched());
+        }
         this.statisticsRepository.save(s);
         return this.seriesRepository.save(series);
     }
@@ -115,10 +133,16 @@ public class MediaListServiceImpl implements MediaListService {
         if (series != null) {
             Statistics s = this.statisticsRepository.findByMediaList(mediaList);
             s.updateTotalShows(-1);
-            s.updateTotalShowScore(-series.getScore());
+            if (series.getScore() > 0) {
+                s.updateTotalShowScoreCount(-1);
+                s.updateTotalShowScore(-series.getScore());
+            }
             s.updateTotalEpisodes(-series.getEpisodes_watched());
             s.updateTotalSeasons(-series.getSeasons_watched());
-            s.updateTotalShowRuntime(-series.getEpisode_runtime() * series.getEpisodes_watched());
+            if (series.getEpisode_runtime() > 0) {
+                s.updateTotalShowRuntime(-series.getEpisode_runtime() * series.getEpisodes_watched());
+                s.updateTotalShowRuntimeCount(-series.getEpisodes_watched());
+            }
             this.statisticsRepository.save(s);
             this.seriesRepository.delete(series);
         }
@@ -134,8 +158,14 @@ public class MediaListServiceImpl implements MediaListService {
         }
         Statistics s = this.statisticsRepository.findByMediaList(mediaList);
         s.updateTotalBooks(1);
-        s.updateTotalBookScore(book.getScore());
-        s.updateTotalPages(book.getPage_count());
+        if (book.getScore() > 0) {
+            s.updateTotalBookScore(book.getScore());
+            s.updateTotalBookScoreCount(1);
+        }
+        if (book.getPage_count() > 0) {
+            s.updateTotalPages(book.getPage_count());
+            s.updateTotalPagesCount(1);
+        }
         this.statisticsRepository.save(s);
         return this.bookRepository.save(book);
     }
@@ -146,8 +176,14 @@ public class MediaListServiceImpl implements MediaListService {
         if (book != null) {
             Statistics s = this.statisticsRepository.findByMediaList(mediaList);
             s.updateTotalBooks(-1);
-            s.updateTotalBookScore(-book.getScore());
-            s.updateTotalPages(-book.getPage_count());
+            if (book.getScore() > 0) {
+                s.updateTotalBookScore(-book.getScore());
+                s.updateTotalBookScoreCount(-1);
+            }
+            if (book.getPage_count() > 0) {
+                s.updateTotalPages(-book.getPage_count());
+                s.updateTotalPagesCount(-1);
+            }
             this.statisticsRepository.save(s);
             this.bookRepository.delete(book);
         }

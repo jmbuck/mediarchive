@@ -31,12 +31,20 @@ public class Statistics implements Serializable {
     @Column(name = "TOTAL_MOVIE_SCORE")
     private int total_movie_score;
 
+    @JsonIgnore
+    @Column(name = "TOTAL_MOVIE_SCORE_COUNT")
+    private int total_movie_score_count;
+
     @Column(name = "MEAN_MOVIE_SCORE")
     private double mean_movie_score;
 
     @JsonIgnore
     @Column(name = "TOTAL_BOOK_SCORE")
     private int total_book_score;
+
+    @JsonIgnore
+    @Column(name = "TOTAL_BOOK_SCORE_COUNT")
+    private int total_book_score_count;
 
     @Column(name = "MEAN_BOOK_SCORE")
     private double mean_book_score;
@@ -45,17 +53,29 @@ public class Statistics implements Serializable {
     @Column(name = "TOTAL_SHOW_SCORE")
     private int total_show_score;
 
+    @JsonIgnore
+    @Column(name = "TOTAL_SHOW_SCORE_COUNT")
+    private int total_show_score_count;
+
     @Column(name = "MEAN_SHOW_SCORE")
     private double mean_show_score;
 
     @Column(name = "TOTAL_MOVIE_RUNTIME")
     private int total_movie_runtime;
 
+    @JsonIgnore
+    @Column(name = "TOTAL_MOVIE_RUNTIME_COUNT")
+    private int total_movie_runtime_count;
+
     @Column(name = "MEAN_MOVIE_RUNTIME")
     private int mean_movie_runtime;
 
     @Column(name = "TOTAL_PAGES")
     private int total_pages;
+
+    @JsonIgnore
+    @Column(name = "TOTAL_PAGES_COUNT")
+    private int total_pages_count;
 
     @Column(name = "MEAN_PAGES")
     private int mean_pages;
@@ -66,11 +86,15 @@ public class Statistics implements Serializable {
     @Column(name = "TOTAL_SEASONS")
     private int total_seasons;
 
-    @Column(name = "TITLE")
+    @Column(name = "TOTAL_SHOW_RUNTIME")
     private int total_show_runtime;
 
     @Column(name = "MEAN_EPISODE_RUNTIME")
     private int mean_episode_runtime;
+
+    @JsonIgnore
+    @Column(name = "TOTAL_EPISODE_RUNTIME_COUNT")
+    private int total_show_runtime_count;
 
     protected Statistics() {
     }
@@ -255,32 +279,57 @@ public class Statistics implements Serializable {
         this.total_pages += update;
     }
 
+    public void updateTotalPagesCount(int update) {
+        this.total_pages_count += update;
+    }
+
     public void updateTotalMovieRuntime(int update) {
         this.total_movie_runtime += update;
+    }
+
+    public void updateTotalMovieRuntimeCount(int update) {
+        this.total_movie_runtime_count += update;
     }
 
     public void updateTotalShowRuntime(int update) {
         this.total_show_runtime += update;
     }
 
+    public void updateTotalShowRuntimeCount(int update) {
+        this.total_show_runtime_count += update;
+    }
+
     public void updateTotalMovieScore(int update) {
         this.total_movie_score += update;
+    }
+
+    public void updateTotalMovieScoreCount(int update) {
+        this.total_movie_score_count += update;
     }
 
     public void updateTotalShowScore(int update) {
         this.total_show_score += update;
     }
 
+    public void updateTotalShowScoreCount(int update) {
+        this.total_show_score_count += update;
+    }
+
     public void updateTotalBookScore(int update) {
         this.total_book_score += update;
     }
+
+    public void updateTotalBookScoreCount(int update) {
+        this.total_book_score_count += update;
+    }
     
     public void updateMeans() {
-        this.mean_movie_score = (int) ((double)this.total_movie_score / this.total_movies);
-        this.mean_show_score = (int) ((double)this.total_show_score / this.total_shows);
-        this.mean_book_score = (int) ((double)this.total_book_score / this.total_books);
-        this.mean_movie_runtime = (int) ((double)this.total_movie_runtime / this.total_movies);
-        this.mean_pages = (int) ((double)this.total_pages / this.total_books);
-        this.mean_episode_runtime = (int) ((double)this.total_show_runtime / this.total_episodes);
+        this.mean_movie_score = (int) ((double)this.total_movie_score / this.total_movie_score_count);
+        this.mean_show_score = (int) ((double)this.total_show_score / this.total_show_score_count);
+        this.mean_book_score = (int) ((double)this.total_book_score / this.total_book_score_count);
+
+        this.mean_movie_runtime = (int) ((double)this.total_movie_runtime / this.total_movie_runtime_count);
+        this.mean_pages = (int) ((double)this.total_pages / this.total_pages_count);
+        this.mean_episode_runtime = (int) ((double)this.total_show_runtime / this.total_show_runtime_count);
     }
 }
