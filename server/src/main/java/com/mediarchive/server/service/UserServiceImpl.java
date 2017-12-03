@@ -4,15 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediarchive.server.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-@Component("userService")
+//@Component("userService")
+@Service("userService")
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -50,6 +56,7 @@ public class UserServiceImpl implements UserService {
         User user = null;
         try {
             user = objectMapper.readValue(body, User.class);
+            user.setRole("USER");
             if (this.userRepository.findByUsername(user.getUsername()) == null) {
                 this.userRepository.save(user);
                 logger.info("Successfully created new user " + user.getUsername());
@@ -403,4 +410,10 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        User curruser = this.getUser(s);
+        UserDetails user = new org.springframework.security.core.userdetails.User(s, curruser.getPassword(), AuthorityUtils.createAuthorityList(curruser.getRole()));
+        return user;
+    }
 }

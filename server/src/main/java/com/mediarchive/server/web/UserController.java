@@ -1,5 +1,6 @@
 package com.mediarchive.server.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediarchive.server.domain.*;
 import com.mediarchive.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -35,20 +37,6 @@ public class UserController {
             return user;
         }
         return HttpStatus.BAD_REQUEST;
-    }
-
-    @RequestMapping(value = "testMovie")
-    public @ResponseBody Object testMovie() {
-        userService.addCompletedMovie("Shawn", "{\n" +
-                "\t\"id\": \"test\",\n" +
-                "    \"title\": \"yehboi\",\n" +
-                "    \"score\": 8,\n" +
-                "    \"watched_date\": \"today\",\n" +
-                "    \"runtime\": 110,\n" +
-                "    \"poster_path\": \"that path tho\"\n" +
-                "}");
-        userService.removeCompletedMovie("Shawn", "test");
-        return "OK";
     }
 
     @RequestMapping(value = "addUser", method = RequestMethod.POST)
@@ -190,7 +178,8 @@ public class UserController {
                 "getBooks?username={username}&key={api-key}\n" +
                 "addUser?key={api-key}\n" +
                 "add?list={completed, current, planning}&media={movie, show, book}&username={user}&key={api-key}\n" +
-                "delete?id={media-id}&list={completed, current, planning}&media={movie, show, book}&username={user}&key={api-key}";
+                "delete?id={media-id}&list={completed, current, planning}&media={movie, show, book}&username={user}&key={api-key}\n" +
+                "logout";
     }
 
 
