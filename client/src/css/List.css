@@ -1,3 +1,7 @@
+.List {
+    margin-bottom: 3rem;
+}
+
 .List .media-list {
     list-style-type: none;
     display: flex;
@@ -13,4 +17,15 @@
 .List .preview:hover {
     color: inherit;
     text-decoration: inherit;
+}
+
+.List .active {
+    box-shadow: none !important;
+    user-select: none !important;
+}
+
+.List .list-nav {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: auto;
 }

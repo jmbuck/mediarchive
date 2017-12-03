@@ -160,6 +160,25 @@ class App extends Component {
     return message;
   }
 
+  deleteMedia = (media, list, item, update) => {
+    if(media === 'books') {
+      const books = {...this.state.books}
+      delete books[list][`book-${item.id}`]
+      this.setState({ books }, () => {update()})
+    } else if(media === 'tv') {
+      const shows = {...this.state.shows}
+      delete shows[list][`show-${item.id}`]
+      this.setState({ shows }, () => {update()})
+    } else if(media === 'movies') {
+      const movies = {...this.state.movies}
+      delete movies[list][`movie-${item.id}`]
+      this.setState({ movies }, () => {update()})
+    }
+    
+    
+    //DELETE FETCH REQUEST HERE
+  }
+
   fetchMovieList = (user) => {
     this.setState({fetchedMovies: true})
   }
@@ -182,6 +201,7 @@ class App extends Component {
                   movies={this.state.movies}
                   shows={this.state.shows}
                   books={this.state.books}
+                  deleteMedia={this.deleteMedia}
                   formatDuration={this.formatDuration}
                   fetchedMovies={this.state.fetchedMovies}
                   fetchedShows={this.state.fetchedShows}

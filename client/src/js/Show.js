@@ -193,7 +193,7 @@ class Show extends Component {
     )
   }
 
-  renderShow = (navProps, show, query, page) => {
+  renderShow = (navProps, show, query, page, list) => {
     const path = `https://image.tmdb.org/t/p/w185${show.poster_path}`
     return (
       <div>
@@ -222,6 +222,17 @@ class Show extends Component {
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
+          {!this.props.search && <button className="btn btn-primary" 
+            onClick={() => {
+              if(list === 'all') {
+                if(this.props.shows['completed'] && this.props.shows['completed'][`show-${show.id}`]) list = 'completed'
+                if(this.props.shows['current'] && this.props.shows['current'][`show-${show.id}`]) list = 'current'
+                if(this.props.shows['planning'] && this.props.shows['planning'][`show-${show.id}`]) list = 'planning'
+              }
+              this.props.deleteMedia('tv', list, show, this.props.update)
+            }}
+          >Delete</button>}
+          
           <button className="btn btn-primary" 
             onClick={() => {
               this.setState({displayMessage: false})
@@ -242,6 +253,7 @@ class Show extends Component {
   render() {
     const query = this.props.match.params.query
     const page = this.props.match.params.page
+    const list = this.props.match.params.list
     const show = {...this.state.show}
     const path = `https://image.tmdb.org/t/p/w185${show.poster_path}`
 
@@ -249,7 +261,7 @@ class Show extends Component {
       <li className="Show">
        <Route path={this.state.infoPath} render={(navProps) => {
         if(this.state.fetched) {
-          return this.renderShow(navProps, show, query, page) 
+          return this.renderShow(navProps, show, query, page, list) 
         }
         return <div>Fetching show info...</div>
        }}/>

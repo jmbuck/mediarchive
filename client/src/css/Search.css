@@ -1,3 +1,7 @@
+.Search {
+    margin-bottom: 3rem;
+}
+
 .Search .search-results {
     list-style-type: none;
     display: flex;

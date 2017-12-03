@@ -16,14 +16,14 @@ class Header extends Component {
       <div className="Header">
         <div className="btn-toolbar" role="toolbar" aria-label="toolbar with lists">
           <div className="nav btn-group mr-2" role="group" aria-label="list links">
-            <NavLink to="/movies/all" className="">
-              <button type="button" className="btn btn-primary">Movies</button>
+            <NavLink to="/movies/all" className="btn btn-primary">
+              Movies
             </NavLink>
-            <NavLink to="/tv/all" className="">
-              <button type="button" className="btn btn-primary">TV Shows</button>
+            <NavLink to="/tv/all" className="btn btn-primary">
+              Shows
             </NavLink>
-            <NavLink to="/books/all" className="">
-              <button type="button" className="btn btn-primary">Books</button>
+            <NavLink to="/books/all" className="btn btn-primary">
+              Books
             </NavLink>
           </div>
           <form className="search-bar input-group" onSubmit={this.handleSubmit}>

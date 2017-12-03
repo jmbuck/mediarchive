@@ -1,6 +1,7 @@
 .Header {
     background-color: #eee;
     padding: 0.5rem;
+    height: 3.5rem;
 }
 
 .Header .btn-toolbar {
@@ -9,9 +10,11 @@
     justify-content: space-between;
 }
 
-.Header a {
-    margin: 0.25rem;
+.Header .active {
+    box-shadow: none !important;
+    user-select: none !important;
 }
+
 .Header .search-bar {
     flex-basis: 60%;
 }
