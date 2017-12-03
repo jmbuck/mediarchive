@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Value("${api.key}")
+    @Value("${spring.api.key}")
     private String api_key;
 
     @RequestMapping(value = "getUsers", method = RequestMethod.GET)
@@ -35,6 +35,20 @@ public class UserController {
             return user;
         }
         return HttpStatus.BAD_REQUEST;
+    }
+
+    @RequestMapping(value = "testMovie")
+    public @ResponseBody Object testMovie() {
+        userService.addCompletedMovie("Shawn", "{\n" +
+                "\t\"id\": \"test\",\n" +
+                "    \"title\": \"yehboi\",\n" +
+                "    \"score\": 8,\n" +
+                "    \"watched_date\": \"today\",\n" +
+                "    \"runtime\": 110,\n" +
+                "    \"poster_path\": \"that path tho\"\n" +
+                "}");
+        userService.removeCompletedMovie("Shawn", "test");
+        return "OK";
     }
 
     @RequestMapping(value = "addUser", method = RequestMethod.POST)
@@ -93,7 +107,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public @ResponseBody Object add(@RequestParam("list") String list, @RequestParam("media") String media, @RequestParam("username") String username, @RequestBody String body, @RequestParam("key") String key) {
+    public @ResponseBody Object addMedia(@RequestParam("list") String list, @RequestParam("media") String media, @RequestParam("username") String username, @RequestBody String body, @RequestParam("key") String key) {
         if (!key.equals(api_key)) return HttpStatus.FORBIDDEN;
         Object toReturn = HttpStatus.BAD_REQUEST;
         if (media.equalsIgnoreCase("movie")) {
@@ -131,38 +145,53 @@ public class UserController {
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
-    public void delete(@RequestParam("list") String list, @RequestParam("media") String media, @RequestParam String id, @RequestParam("username") String username, @RequestParam("key") String key) {
-        if (!key.equals(api_key)) return;
+    public @ResponseBody Object deleteMedia(@RequestParam("list") String list, @RequestParam("media") String media, @RequestParam("id") String id, @RequestParam("username") String username, @RequestParam("key") String key) {
+        if (!key.equals(api_key)) return HttpStatus.FORBIDDEN;
         if (media.equalsIgnoreCase("movie")) {
             if (list.equalsIgnoreCase("completed")) {
-                userService.removeCompletedMovie(username, id);
+                return userService.removeCompletedMovie(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-                userService.removeIntentMovie(username, id);
+                return userService.removeIntentMovie(username, id);
             }
         }
         else if (media.equalsIgnoreCase("show")) {
             if (list.equalsIgnoreCase("completed")) {
-                userService.removeCompletedSeries(username, id);
+                return userService.removeCompletedSeries(username, id);
             }
             else if (list.equalsIgnoreCase("current")) {
-                userService.removeUnderwaySeries(username, id);
+                return userService.removeUnderwaySeries(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-                userService.removeIntentSeries(username, id);
+                return userService.removeIntentSeries(username, id);
             }
         }
         else if (media.equalsIgnoreCase("book")) {
             if (list.equalsIgnoreCase("completed")) {
-                userService.removeCompletedBook(username, id);
+                return userService.removeCompletedBook(username, id);
             }
             else if (list.equalsIgnoreCase("current")) {
-                userService.removeUnderwayBook(username, id);
+                return userService.removeUnderwayBook(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-                userService.removeIntentBook(username, id);
+                return userService.removeIntentBook(username, id);
             }
         }
+        return HttpStatus.OK;
     }
+
+    @RequestMapping(value = "getHelp", method = RequestMethod.GET)
+    public @ResponseBody String getHelp() {
+        return  "The following are endpoints: \n" +
+                "getUser?username={username}&key={api-key}\n" +
+                "getStats?username={username}&key={api-key}\n" +
+                "getMovies?username={username}&key={api-key}\n" +
+                "getShows?username={username}&key={api-key}\n" +
+                "getBooks?username={username}&key={api-key}\n" +
+                "addUser?key={api-key}\n" +
+                "add?list={completed, current, planning}&media={movie, show, book}&username={user}&key={api-key}\n" +
+                "delete?id={media-id}&list={completed, current, planning}&media={movie, show, book}&username={user}&key={api-key}";
+    }
+
 
 }
