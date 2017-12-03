@@ -27,18 +27,21 @@ public class Statistics implements Serializable {
     @Column(name = "TOTAL_BOOKS")
     private int total_books;
 
+    @JsonIgnore
     @Column(name = "TOTAL_MOVIE_SCORE")
     private int total_movie_score;
 
     @Column(name = "MEAN_MOVIE_SCORE")
     private double mean_movie_score;
 
+    @JsonIgnore
     @Column(name = "TOTAL_BOOK_SCORE")
     private int total_book_score;
 
     @Column(name = "MEAN_BOOK_SCORE")
     private double mean_book_score;
 
+    @JsonIgnore
     @Column(name = "TOTAL_SHOW_SCORE")
     private int total_show_score;
 
