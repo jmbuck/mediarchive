@@ -17,13 +17,13 @@ Start by cloning this repository onto your computer, then follow the instruction
 3. Add the pertinent API information to `keys.example.js` and rename the file to `keys.js`
 4. Start the local server with `npm start` or `yarn start`
 ### Server
-1. Update [`application.properties`](https://github.com/jmbuck/mediarchive/server/src/main/resources/application.properties) API key field
+1. Update [`application.properties`](../master/server/src/main/resources/application.properties) API key field
 2. Install Apache Maven i.e. `sudo apt-get install maven`
 3. Run `$ ./mvn clean package install` in the server directory
 4. Locate the generated `.jar` file to execute locally  
     _Only for running on AWS_  
     1. Create environment on AWS Elastic Beanstalk [(step-by-step)](https://aws.amazon.com/blogs/devops/deploying-a-spring-boot-application-on-aws-using-aws-elastic-beanstalk/)
-    2. Update [`application.properties`](https://github.com/jmbuck/mediarchive/server/src/main/resources/application.properties) with AWS credentials  
+    2. Update [`application.properties`](../master/server/src/main/resources/application.properties) with AWS credentials  
     3. Deploy `.jar` file in the AWS environment
 
 Good luck!
