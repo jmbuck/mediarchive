@@ -48,6 +48,9 @@ public class Series implements Serializable {
     @Column(name = "NUMBER_OF_SEASONS")
     private int number_of_seasons;
 
+    @Column(name = "POSTER_PATH")
+    private String poster_path;
+
     protected Series() {
     }
 
@@ -63,6 +66,7 @@ public class Series implements Serializable {
         this.episode_runtime = details.getEpisode_runtime();
         this.number_of_episodes = details.getNumber_of_episodes();
         this.number_of_seasons = details.getNumber_of_seasons();
+        this.poster_path = details.getPoster_path();
     }
 
     public String getId() {

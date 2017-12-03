@@ -19,6 +19,7 @@ public class MediaDetails implements Serializable {
     private int episodes_watched;
     private int seasons_watched;
     private int page_count;
+    private String poster_path;
 
     public MediaDetails() {
     }
@@ -127,6 +128,14 @@ public class MediaDetails implements Serializable {
         this.page_count = page_count;
     }
 
+    public String getPoster_path() {
+        return poster_path;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
+    }
+
     @Override
     public String toString() {
         return "" + id + "\n" +
@@ -141,6 +150,7 @@ public class MediaDetails implements Serializable {
                 "" + end_date + "\n" +
                 "" + episodes_watched + "\n" +
                 "" + seasons_watched + "\n" +
-                "" + page_count;
+                "" + page_count + "\n" +
+                "" + poster_path + "\n";
     }
 }

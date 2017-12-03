@@ -255,6 +255,54 @@ public class Statistics implements Serializable {
         this.mean_episode_runtime = mean_episode_runtime;
     }
 
+    public int getTotal_movie_score_count() {
+        return total_movie_score_count;
+    }
+
+    public void setTotal_movie_score_count(int total_movie_score_count) {
+        this.total_movie_score_count = total_movie_score_count;
+    }
+
+    public int getTotal_book_score_count() {
+        return total_book_score_count;
+    }
+
+    public void setTotal_book_score_count(int total_book_score_count) {
+        this.total_book_score_count = total_book_score_count;
+    }
+
+    public int getTotal_show_score_count() {
+        return total_show_score_count;
+    }
+
+    public void setTotal_show_score_count(int total_show_score_count) {
+        this.total_show_score_count = total_show_score_count;
+    }
+
+    public int getTotal_movie_runtime_count() {
+        return total_movie_runtime_count;
+    }
+
+    public void setTotal_movie_runtime_count(int total_movie_runtime_count) {
+        this.total_movie_runtime_count = total_movie_runtime_count;
+    }
+
+    public int getTotal_pages_count() {
+        return total_pages_count;
+    }
+
+    public void setTotal_pages_count(int total_pages_count) {
+        this.total_pages_count = total_pages_count;
+    }
+
+    public int getTotal_show_runtime_count() {
+        return total_show_runtime_count;
+    }
+
+    public void setTotal_show_runtime_count(int total_show_runtime_count) {
+        this.total_show_runtime_count = total_show_runtime_count;
+    }
+
     public void updateTotalMovies(int update) {
         this.total_movies += update;
     }

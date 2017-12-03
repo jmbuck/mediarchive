@@ -36,6 +36,9 @@ public class Book implements Serializable {
     @Column(name = "PAGE_COUNT")
     private int page_count;
 
+    @Column(name = "POSTER_PATH")
+    private String poster_path;
+
     protected Book() {
     }
 
@@ -47,6 +50,7 @@ public class Book implements Serializable {
         this.start_date = details.getStart_date();
         this.end_date = details.getEnd_date();
         this.page_count = details.getPage_count();
+        this.poster_path = details.getPoster_path();
     }
 
     public String getId() {
@@ -95,6 +99,14 @@ public class Book implements Serializable {
 
     public void setPage_count(int page_count) {
         this.page_count = page_count;
+    }
+
+    public String getPoster_path() {
+        return poster_path;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
     }
 
     @Override

@@ -95,39 +95,39 @@ public class UserController {
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public @ResponseBody Object add(@RequestParam("list") String list, @RequestParam("media") String media, @RequestParam("username") String username, @RequestBody String body, @RequestParam("key") String key) {
         if (!key.equals(api_key)) return HttpStatus.FORBIDDEN;
-        System.out.println(list + "\n "+ media + "\n" + username);
+        Object toReturn = HttpStatus.BAD_REQUEST;
         if (media.equalsIgnoreCase("movie")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                toReturn = userService.addCompletedMovie(username, body);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                toReturn = userService.addIntentMovie(username, body);
             }
         }
         else if (media.equalsIgnoreCase("show")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                toReturn = userService.addCompletedSeries(username, body);
             }
             else if (list.equalsIgnoreCase("current")) {
-
+                toReturn = userService.addUnderwaySeries(username, body);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                toReturn = userService.addIntentSeries(username, body);
             }
         }
         else if (media.equalsIgnoreCase("book")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                toReturn = userService.addCompletedBook(username, body);
             }
             else if (list.equalsIgnoreCase("current")) {
-
+                toReturn = userService.addUnderwayBook(username, body);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                toReturn = userService.addIntentBook(username, body);
             }
         }
         //could not parse body into movie or username doesn't exist
-        return HttpStatus.BAD_REQUEST;
+        return toReturn;
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
@@ -135,32 +135,32 @@ public class UserController {
         if (!key.equals(api_key)) return;
         if (media.equalsIgnoreCase("movie")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                userService.removeCompletedMovie(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                userService.removeIntentMovie(username, id);
             }
         }
         else if (media.equalsIgnoreCase("show")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                userService.removeCompletedSeries(username, id);
             }
             else if (list.equalsIgnoreCase("current")) {
-
+                userService.removeUnderwaySeries(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                userService.removeIntentSeries(username, id);
             }
         }
         else if (media.equalsIgnoreCase("book")) {
             if (list.equalsIgnoreCase("completed")) {
-
+                userService.removeCompletedBook(username, id);
             }
             else if (list.equalsIgnoreCase("current")) {
-
+                userService.removeUnderwayBook(username, id);
             }
             else if (list.equalsIgnoreCase("planning")) {
-
+                userService.removeIntentBook(username, id);
             }
         }
     }

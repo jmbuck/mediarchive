@@ -65,21 +65,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Movie addMovie(String username, String details) {
-        return null;
-    }
-
-    @Override
-    public Series addSeries(String username, String details) {
-        return null;
-    }
-
-    @Override
-    public Book addBook(String username, String details) {
-        return null;
-    }
-
-    @Override
     public String getMovies(String username) {
         User user = getUser(username);
         if (user != null) {
@@ -162,49 +147,260 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public Movie addCompletedMovie(String username, String body) {
+        Movie movie = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                movie = mediaListService.addMovie(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed movie to user " + username);
+                return movie;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s completed movies");
+        return movie;
+    }
 
-//
-//    @Override
-//    public Movie addCompletedMovie(String username, String body) {
-//        Movie movie = null;
-//        try {
-//            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
-//            User user = getUser(username);
-//            if (user != null) {
-//                movie = mediaListService.addMovie(user.getMediaCompleted(), details);
-//                logger.info("Successfully added completed movie to user " + username);
-//                return movie;
-//            }
-//        } catch (IOException e) {
-//            logger.error("Could not parse JSON", e);
-//        }
-//        logger.error("Unsuccessful addition to user " + username + "'s completed movies");
-//        return movie;
-//    }
-//
-//    @Override
-//    public List<Movie> getCompletedMovies(String username) {
-//        User user = getUser(username);
-//        if (user != null) {
-//            logger.info("Request for user " + username + "'s completed movies list");
-//            return mediaListService.getMovies(user.getMediaCompleted());
-//        }
-//        logger.error("Could not return user " + username + "'s completed movies list");
-//        return null;
-//    }
-//
-//    @Override
-//    public Movie removeCompletedMovie(String username, String id) {
-//        User user = getUser(username);
-//        if (user != null) {
-//            Movie movie = mediaListService.removeMovie(user.getMediaCompleted(), id);
-//            if (movie != null) {
-//                logger.info("Successfully removed completed movie from user " + username);
-//                return movie;
-//            }
-//        }
-//        logger.error("Unsuccessful removal to user " + username + "'s completed movies");
-//        return null;
-//    }
+    @Override
+    public Series addCompletedSeries(String username, String body) {
+        Series series = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed series to user " + username);
+                return series;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s completed series");
+        return series;
+    }
+
+    @Override
+    public Book addCompletedBook(String username, String body) {
+        Book book = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaCompleted(), details);
+                logger.info("Successfully added completed book to user " + username);
+                return book;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s completed books");
+        return book;
+    }
+
+    @Override
+    public Movie removeCompletedMovie(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Movie movie = mediaListService.removeMovie(user.getMediaCompleted(), id);
+            if (movie != null) {
+                logger.info("Successfully removed completed movie from user " + username);
+                return movie;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s completed movies");
+        return null;
+    }
+
+    @Override
+    public Series removeCompletedSeries(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Series series = mediaListService.removeSeries(user.getMediaCompleted(), id);
+            if (series != null) {
+                logger.info("Successfully removed completed series from user " + username);
+                return series;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s completed series");
+        return null;
+    }
+
+    @Override
+    public Book removeCompletedBook(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Book book = mediaListService.removeBook(user.getMediaCompleted(), id);
+            if (book != null) {
+                logger.info("Successfully removed completed book from user " + username);
+                return book;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s completed books");
+        return null;
+    }
+
+    @Override
+    public Series addUnderwaySeries(String username, String body) {
+        Series series = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaUnderway(), details);
+                logger.info("Successfully added underway series to user " + username);
+                return series;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s underway series");
+        return series;
+    }
+
+    @Override
+    public Book addUnderwayBook(String username, String body) {
+        Book book = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaUnderway(), details);
+                logger.info("Successfully added underway book to user " + username);
+                return book;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s underway books");
+        return book;
+    }
+
+    @Override
+    public Series removeUnderwaySeries(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Series series = mediaListService.removeSeries(user.getMediaUnderway(), id);
+            if (series != null) {
+                logger.info("Successfully removed underway series from user " + username);
+                return series;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s underway series");
+        return null;
+    }
+
+    @Override
+    public Book removeUnderwayBook(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Book book = mediaListService.removeBook(user.getMediaUnderway(), id);
+            if (book != null) {
+                logger.info("Successfully removed underway book from user " + username);
+                return book;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s underway books");
+        return null;
+    }
+
+    @Override
+    public Movie addIntentMovie(String username, String body) {
+        Movie movie = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                movie = mediaListService.addMovie(user.getMediaIntent(), details);
+                logger.info("Successfully added intent movie to user " + username);
+                return movie;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s intent movies");
+        return movie;
+    }
+
+    @Override
+    public Series addIntentSeries(String username, String body) {
+        Series series = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                series = mediaListService.addSeries(user.getMediaIntent(), details);
+                logger.info("Successfully added intent series to user " + username);
+                return series;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s intent series");
+        return series;
+    }
+
+    @Override
+    public Book addIntentBook(String username, String body) {
+        Book book = null;
+        try {
+            MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
+            User user = getUser(username);
+            if (user != null) {
+                book = mediaListService.addBook(user.getMediaIntent(), details);
+                logger.info("Successfully added intent book to user " + username);
+                return book;
+            }
+        } catch (IOException e) {
+            logger.error("Could not parse JSON", e);
+        }
+        logger.error("Unsuccessful addition to user " + username + "'s intent books");
+        return book;
+    }
+
+    @Override
+    public Movie removeIntentMovie(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Movie movie = mediaListService.removeMovie(user.getMediaIntent(), id);
+            if (movie != null) {
+                logger.info("Successfully removed intent movie from user " + username);
+                return movie;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s intent movies");
+        return null;
+    }
+
+    @Override
+    public Series removeIntentSeries(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Series series = mediaListService.removeSeries(user.getMediaIntent(), id);
+            if (series != null) {
+                logger.info("Successfully removed intent series from user " + username);
+                return series;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s intent series");
+        return null;
+    }
+
+    @Override
+    public Book removeIntentBook(String username, String id) {
+        User user = getUser(username);
+        if (user != null) {
+            Book book = mediaListService.removeBook(user.getMediaIntent(), id);
+            if (book != null) {
+                logger.info("Successfully removed intent book from user " + username);
+                return book;
+            }
+        }
+        logger.error("Unsuccessful removal to user " + username + "'s intent books");
+        return null;
+    }
 
 }

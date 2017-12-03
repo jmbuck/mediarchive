@@ -33,6 +33,9 @@ public class Movie implements Serializable {
     @Column(name = "RUNTIME")
     private int runtime;
 
+    @Column(name = "POSTER_PATH")
+    private String poster_path;
+
     protected Movie() {
     }
 
@@ -43,6 +46,7 @@ public class Movie implements Serializable {
         this.score = details.getScore();
         this.watched_date = details.getWatched_date();
         this.runtime = details.getRuntime();
+        this.poster_path = details.getPoster_path();
     }
 
     public String getId() {
