@@ -1,33 +1,62 @@
 import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
+import base64 from 'base-64'
 
 import Main from './Main'
+import SignIn from './SignIn'
 import '../css/App.css'
+import { serverKey, adminUser, adminPassword } from '../keys'
 
 class App extends Component {
   constructor() {
     super()
     this.state = {
       user: null,
+      auth: null,
       books: {},
       movies: {},
       shows: {},
       fetchedMovies: false,
       fetchedBooks: false,
       fetchedShows: false,
+      signedIn: false,
     }
   }
 
   componentDidMount = () => {
+    //this.signIn(adminUser, adminPassword)
     if(this.signedIn()) {
-      this.fetchMovieList(this.state.user)
-      this.fetchShowList(this.state.user)
-      this.fetchBookList(this.state.user)
+      this.fetchLists()
     }
   }
 
+  fetchLists = () => {
+    this.fetchMovieList(this.state.user)
+    this.fetchShowList(this.state.user)
+    this.fetchBookList(this.state.user)
+  }
+
+  signIn = (user, password) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/login?username=${user}`, {
+      mode: 'cors',
+      headers: {
+        'Authorization': `${base64.encode(`${user}:${password}`)}`
+      }
+    })
+    .then(response => response.text())
+    .then(data => {
+      if(data === '"OK"') {
+        const auth = base64.encode(`${user}:${password}`)
+        localStorage.setItem('uid', auth)
+        this.setState({ user, auth, signedIn: true }, this.fetchLists)
+      } else {
+        alert('Invalid username or password')
+      }
+    })
+  }
+
   signedIn = () => {
-    return true;
+    return this.state.signedIn;
   }
 
   formatDuration = (totalTime) => {
@@ -104,7 +133,13 @@ class App extends Component {
       movies[category][`movie-${movie.id}`].title = movie.title
       movies[category][`movie-${movie.id}`].poster_path = movie.poster_path
       this.setState({movies})
-
+      fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=movie&username=${this.state.user}&key=${serverKey}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': this.state.auth
+        },
+        body: JSON.stringify(movies[category][`movie-${movie.id}`])
+      })
       message = `${movie.title} successfully added to list!`
     }
     return message;
@@ -131,7 +166,7 @@ class App extends Component {
       shows[category][`show-${show.id}`].name = show.name
       shows[category][`show-${show.id}`].poster_path = show.poster_path
       this.setState({shows})
-      
+     
       message = `${show.name} successfully added to list!`
     }
     return message;
@@ -161,26 +196,55 @@ class App extends Component {
   }
 
   deleteMedia = (media, list, item, update) => {
+    let apiMedia;
     if(media === 'books') {
+      apiMedia = 'book'
       const books = {...this.state.books}
       delete books[list][`book-${item.id}`]
       this.setState({ books }, () => {update()})
     } else if(media === 'tv') {
+      apiMedia = 'show'
       const shows = {...this.state.shows}
       delete shows[list][`show-${item.id}`]
       this.setState({ shows }, () => {update()})
     } else if(media === 'movies') {
+      apiMedia = 'movie'
       const movies = {...this.state.movies}
       delete movies[list][`movie-${item.id}`]
       this.setState({ movies }, () => {update()})
     }
     
-    
-    //DELETE FETCH REQUEST HERE
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/delete?id=${item.id}&list=${list}&media=${apiMedia}&username=${this.state.user}&key=${serverKey}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': this.state.auth
+      }
+    })
   }
 
   fetchMovieList = (user) => {
-    this.setState({fetchedMovies: true})
+    console.log(this.state.auth)
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getMovies?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => {console.log(response);return response.json()})
+    .then(movieList => {    
+      const movies = {...this.state.movies}
+      if(movieList !== '"FORBIDDEN"') {
+        movieList.completed.map((movie) => {
+          console.log(movie)
+          if(!movies.completed) movies.completed = {}
+          movies.completed[`movie-${movie.id}`] = movie
+        })
+        movieList.planning.map((movie) => {
+          if(!movies.planning) movies.planning = {}
+          movies.planning[`movie-${movie.id}`] = movie
+        })
+      }
+      this.setState({fetchedMovies: true, movies})
+    })
   }
 
   fetchShowList = (user) => {
@@ -195,6 +259,11 @@ class App extends Component {
     return (
       <div className="App">
         <Switch>
+          <Route path="/sign-in" render={() =>
+            !this.signedIn() 
+            ? <SignIn signIn={this.signIn} />
+            : <Redirect to="/"/>
+          }/>
           <Route path="/" render={() =>
               this.signedIn() 
               ? <Main 
