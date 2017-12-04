@@ -36,7 +36,7 @@ class Header extends Component {
           </form>
           <div className="misc-buttons btn-group" role="group" aria-label="sign out">
             <button type="button" className="btn btn-secondary">Statistics</button>
-            <button type="button" className="btn btn-secondary">Sign out</button>
+            <button type="button" className="btn btn-secondary" onClick={this.props.signOut}>Sign out</button>
           </div>
         </div>
       </div>

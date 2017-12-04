@@ -21,7 +21,6 @@ class List extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    console.log(nextProps.movies)
     this.setState({movies: nextProps.movies, shows: nextProps.shows, books: nextProps.books})
   }
 
