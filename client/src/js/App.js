@@ -5,7 +5,7 @@ import base64 from 'base-64'
 import Main from './Main'
 import SignIn from './SignIn'
 import '../css/App.css'
-import { serverKey, adminUser, adminPassword } from '../keys'
+import { serverKey } from '../keys'
 
 class App extends Component {
   constructor() {
@@ -77,6 +77,9 @@ class App extends Component {
   }
 
   formatDuration = (totalTime) => {
+    if(totalTime === 0) {
+      return '0 minutes'
+    }
     let minutes = totalTime
     let hours = Math.floor(minutes / 60) 
     minutes = minutes % 60
@@ -216,7 +219,7 @@ class App extends Component {
       books[category][`book-${book.id}`].title = book.volumeInfo.title
       books[category][`book-${book.id}`].path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
       this.setState({books})
-      
+
       fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=book&username=${this.state.user}&key=${serverKey}`, {
         method: 'POST',
         headers: {
@@ -267,11 +270,11 @@ class App extends Component {
     .then(movieList => {    
       const movies = {...this.state.movies}
       if(movieList !== '"FORBIDDEN"') {
-        movieList.completed.map((movie) => {
+        movieList.completed.forEach((movie) => {
           if(!movies.completed) movies.completed = {}
           movies.completed[`movie-${movie.id}`] = movie
         })
-        movieList.planning.map((movie) => {
+        movieList.planning.forEach((movie) => {
           if(!movies.planning) movies.planning = {}
           movies.planning[`movie-${movie.id}`] = movie
         })
@@ -290,15 +293,15 @@ class App extends Component {
     .then(showList => {   
       const shows = {...this.state.shows}
       if(showList !== '"FORBIDDEN"') {
-        showList.completed.map((show) => {
+        showList.completed.forEach((show) => {
           if(!shows.completed) shows.completed = {}
           shows.completed[`show-${show.id}`] = show
         })
-        showList.current.map((show) => {
+        showList.current.forEach((show) => {
           if(!shows.current) shows.current = {}
           shows.current[`show-${show.id}`] = show
         })
-        showList.planning.map((show) => {
+        showList.planning.forEach((show) => {
           if(!shows.planning) shows.planning = {}
           shows.planning[`show-${show.id}`] = show
         })
@@ -317,15 +320,15 @@ class App extends Component {
     .then(bookList => {   
       const books = {...this.state.books}
       if(bookList !== '"FORBIDDEN"') {
-        bookList.completed.map((book) => {
+        bookList.completed.forEach((book) => {
           if(!books.completed) books.completed = {}
           books.completed[`book-${book.id}`] = book
         })
-        bookList.current.map((book) => {
+        bookList.current.forEach((book) => {
           if(!books.current) books.current = {}
           books.current[`book-${book.id}`] = book
         })
-        bookList.planning.map((book) => {
+        bookList.planning.forEach((book) => {
           if(!books.planning) books.planning = {}
           books.planning[`book-${book.id}`] = book
         })
@@ -358,7 +361,9 @@ class App extends Component {
                   addMovie={this.addMovie}
                   addShow={this.addShow}
                   addBook={this.addBook}  
-                  signOut={this.signOut}             
+                  signOut={this.signOut} 
+                  user={this.state.user}
+                  auth={this.state.auth}            
                   {...this.props} 
                 />
               : <Redirect to="/sign-in" />

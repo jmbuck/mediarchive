@@ -35,7 +35,9 @@ class Header extends Component {
             <input type="text" name="query" className="form-control" placeholder="Find media" aria-describedby="btnGroupAddon" />
           </form>
           <div className="misc-buttons btn-group" role="group" aria-label="sign out">
-            <button type="button" className="btn btn-secondary">Statistics</button>
+            <NavLink to="/" className="btn btn-secondary">
+              Statistics
+            </NavLink>
             <button type="button" className="btn btn-secondary" onClick={this.props.signOut}>Sign out</button>
           </div>
         </div>

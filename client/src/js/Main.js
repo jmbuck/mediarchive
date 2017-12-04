@@ -6,6 +6,7 @@ import Header from './Header'
 import Footer from './Footer'
 import List from './List'
 import Search from './Search'
+import Stats from './Stats'
 
 class Main extends Component {
   render() {
@@ -18,7 +19,7 @@ class Main extends Component {
             <Route path="/movies/:list" render={(navProps) => <List media="movies" {...this.props} {...navProps} />}/>
             <Route path="/tv/:list" render={(navProps) => <List media="tv" {...this.props} {...navProps} />}/>
             <Route path="/books/:list" render={(navProps) => <List media="books" {...this.props} {...navProps} />}/>            
-            <Route path="/" render={(navProps) => <div>List statistics and user information will go here</div>}/>
+            <Route path="/" render={(navProps) => <Stats {...this.props} />}/>
         </Switch>
         <Footer />
       </div>
