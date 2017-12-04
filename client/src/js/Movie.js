@@ -138,7 +138,7 @@ class Movie extends Component {
     )
   }
 
-  renderMovie = (navProps, movie, query, page) => {
+  renderMovie = (navProps, movie, query, page, list) => {
     const path = `https://image.tmdb.org/t/p/w185${movie.poster_path}`
     return (
       <div>
@@ -168,6 +168,16 @@ class Movie extends Component {
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
+          {!this.props.search && <button className="btn btn-primary" 
+            onClick={() => { 
+              if(list === 'all') {
+                if(this.props.movies['completed'] && this.props.movies['completed'][`movie-${movie.id}`]) list = 'completed'
+                if(this.props.movies['planning'] && this.props.movies['planning'][`movie-${movie.id}`]) list = 'planning'
+              }
+              this.props.deleteMedia('movies', list, movie, this.props.update)
+            }}
+          >Delete</button>}
+
           <button className="btn btn-primary" 
             onClick={() => { 
               this.setState({displayMessage: false})
@@ -187,6 +197,7 @@ class Movie extends Component {
   render() {
     const query = this.props.match.params.query
     const page = this.props.match.params.page
+    const list = this.props.match.params.list
     const movie = {...this.state.movie}
     const path = `https://image.tmdb.org/t/p/w185${movie.poster_path}`
 
@@ -194,7 +205,7 @@ class Movie extends Component {
       <li className="Movie">
         <Route path={this.state.infoPath} render={(navProps) => {
           if(this.state.fetched) {
-            return this.renderMovie(navProps, movie, query, page) 
+            return this.renderMovie(navProps, movie, query, page, list) 
           }
           return <div>Fetching movie info...</div>
         }}/>

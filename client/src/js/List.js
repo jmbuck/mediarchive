@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { NavLink } from 'react-router-dom'
 
 import '../css/List.css'
 import Show from './Show'
@@ -23,19 +24,31 @@ class List extends Component {
     this.setState({movies: nextProps.movies, shows: nextProps.shows, books: nextProps.books})
   }
 
-  getListName = (list, media) => {
+  update = () => {
+    const list = this.props.match.params.list;
+    const media = this.props.media;
+    this.props.history.push(`/${media}/${list}`)
+  }
+
+  getListName = (list, media, proper = false) => {
     //Convert programmatic list name to readable list name
-    if(list === 'completed') return 'completed'
+    if(list === 'completed') return proper ? 'Completed' : 'completed'
 
     if(media === 'movies') {
-      return 'plan to watch'
+      return proper ? 'Plan to Watch' : 'plan to watch'
     } else if(media === 'books') {
-      if(list === 'planning') return 'plan to read'
-      if(list === 'current') return 'reading' 
+      if(list === 'planning') return proper ? 'Plan to Read' : 'plan to read'
+      if(list === 'current') return proper ? 'Reading' : 'reading' 
     } else if(media === 'tv') {
-      if(list === 'planning') return 'plan to watch'
-      if(list === 'current') return 'watching'
+      if(list === 'planning') return proper ? 'Plan to Watch' : 'plan to watch'
+      if(list === 'current') return proper ? 'Watching' : 'watching'
     }
+  }
+
+  getMediaName = (media) => {
+    if(media === 'movies') return 'Movies'
+    if(media === 'tv') return 'Shows'
+    if(media === 'books') return 'Books'
   }
 
   renderList = (list, media) => {
@@ -43,10 +56,11 @@ class List extends Component {
       return this.state.movies[list] && Object.keys(this.state.movies[list]).length > 0
       ? <ul className="media-list">{Object.keys(this.state.movies[list]).map((id, i) => 
           <Movie 
-            key={i}
+            key={id}
             index={i}
             movie={this.state.movies[list][id]}
             search={false}
+            update={this.update}
             {...this.props}
           />)}
         </ul>
@@ -55,10 +69,11 @@ class List extends Component {
       return this.state.shows[list] && Object.keys(this.state.shows[list]).length > 0
       ? <ul className="media-list">{Object.keys(this.state.shows[list]).map((id, i) => 
           <Show 
-            key={i}
+            key={id}
             index={i}
             show={this.state.shows[list][id]}
             search={false}
+            update={this.update}
             {...this.props}
           />)}
         </ul>
@@ -67,10 +82,11 @@ class List extends Component {
       return this.state.books[list] && Object.keys(this.state.books[list]).length > 0
       ? <ul className="media-list">{Object.keys(this.state.books[list]).map((id, i) => 
           <Book 
-            key={i}
+            key={id}
             index={i}
             book={this.state.books[list][id]}
             search={false}
+            update={this.update}
             {...this.props}
           />)}
         </ul>
@@ -84,6 +100,21 @@ class List extends Component {
 
     return (
       <div className="List">
+          <div className="list-nav btn-group mr-2" role="group" aria-label="list links">
+            <NavLink to={`/${media}/all`} className="btn btn-primary">
+              All {this.getMediaName(media)}
+            </NavLink>
+            {media !== 'movies' &&
+            <NavLink to={`/${media}/current`} className="btn btn-primary">
+              {this.getListName('current', media, true)}
+            </NavLink>}
+            <NavLink to={`/${media}/completed`} className="btn btn-primary">
+              {this.getListName('completed', media, true)}
+            </NavLink>
+            <NavLink to={`/${media}/planning`} className="btn btn-primary">
+              {this.getListName('planning', media, true)}
+            </NavLink>
+          </div>
           {list === 'all' ? (
             <div>
               {media !== 'movies' ? this.renderList('current', media) : <div></div>}

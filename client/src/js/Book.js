@@ -135,7 +135,7 @@ class Book extends Component {
     )
   }
 
-  renderBook = (navProps, book, query, page) => {
+  renderBook = (navProps, book, query, page, list) => {
     const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
     return (
       <div>
@@ -163,7 +163,18 @@ class Book extends Component {
               }
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
-
+        
+          {!this.props.search && <button className="btn btn-primary" 
+            onClick={() => { 
+              if(list === 'all') {
+                if(this.props.books['completed'] && this.props.books['completed'][`book-${book.id}`]) list = 'completed'
+                if(this.props.books['current'] && this.props.books['current'][`book-${book.id}`]) list = 'current'
+                if(this.props.books['planning'] && this.props.books['planning'][`book-${book.id}`]) list = 'planning'
+              }
+              this.props.deleteMedia('books', list, book, this.props.update)
+            }}
+          >Delete</button>}
+          
           <button className="btn btn-primary" 
             onClick={() => {
               this.setState({displayMessage: false})
@@ -184,6 +195,7 @@ class Book extends Component {
   render() {
     const query = this.props.match.params.query
     const page = this.props.match.params.page
+    const list = this.props.match.params.list
     const book = {...this.state.book}
     const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
 
@@ -191,7 +203,7 @@ class Book extends Component {
       <li className="Book">
        <Route path={this.state.infoPath} render={(navProps) => {
           if(this.state.fetched) {
-            return this.renderBook(navProps, book, query, page) 
+            return this.renderBook(navProps, book, query, page, list) 
           }
           return <div>Fetching book info...</div>
        }}/>

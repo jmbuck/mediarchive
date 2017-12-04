@@ -1,33 +1,79 @@
 import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
+import base64 from 'base-64'
 
 import Main from './Main'
+import SignIn from './SignIn'
 import '../css/App.css'
+import { serverKey, adminUser, adminPassword } from '../keys'
 
 class App extends Component {
   constructor() {
     super()
     this.state = {
       user: null,
+      auth: null,
       books: {},
       movies: {},
       shows: {},
       fetchedMovies: false,
       fetchedBooks: false,
       fetchedShows: false,
+      signedIn: false,
+      ready: false,
     }
   }
 
   componentDidMount = () => {
-    if(this.signedIn()) {
-      this.fetchMovieList(this.state.user)
-      this.fetchShowList(this.state.user)
-      this.fetchBookList(this.state.user)
-    }
+    this.setState({
+      user: localStorage.getItem('user'),
+      auth: localStorage.getItem('uid')
+    }, () => {
+      if(this.state.auth && this.state.user) {
+        this.setState({signedIn: true, ready: true})
+        this.fetchLists()
+      } else {
+        this.setState({ready: true})
+      }
+    })
+  }
+
+  fetchLists = () => {
+    this.fetchMovieList(this.state.user)
+    this.fetchShowList(this.state.user)
+    this.fetchBookList(this.state.user)
+  }
+
+  signIn = (user, password) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/login?username=${user}`, {
+      mode: 'cors',
+      headers: {
+        'Authorization': `${base64.encode(`${user}:${password}`)}`
+      }
+    })
+    .then(response => response.text())
+    .then(data => {
+      if(data === '"OK"') {
+        const auth = base64.encode(`${user}:${password}`)
+        localStorage.setItem('uid', auth)
+        localStorage.setItem('user', user)
+        this.setState({ user, auth, signedIn: true, ready: true }, this.fetchLists)
+      } else {
+        alert('Invalid username or password')
+      }
+    })
   }
 
   signedIn = () => {
-    return true;
+    return this.state.signedIn;
+  }
+
+  signOut = () => {
+    localStorage.removeItem('uid')
+    localStorage.removeItem('user')
+    this.setState({user: null, auth: null, signedIn: false, ready: false}, () => {
+      this.props.history.push('/sign-in')
+    })
   }
 
   formatDuration = (totalTime) => {
@@ -104,6 +150,14 @@ class App extends Component {
       movies[category][`movie-${movie.id}`].title = movie.title
       movies[category][`movie-${movie.id}`].poster_path = movie.poster_path
       this.setState({movies})
+      
+      fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=movie&username=${this.state.user}&key=${serverKey}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': this.state.auth
+        },
+        body: JSON.stringify(movies[category][`movie-${movie.id}`])
+      })
 
       message = `${movie.title} successfully added to list!`
     }
@@ -122,7 +176,7 @@ class App extends Component {
       shows[category][`show-${show.id}`].start_date = info.start_date ? info.start_date : ""
       shows[category][`show-${show.id}`].end_date = info.end_date ? info.end_date : ""
       shows[category][`show-${show.id}`].score = info.score ? parseInt(info.score, 10) : 0
-      shows[category][`show-${show.id}`].mean_episode_run_time = info.mean_episode_run_time
+      shows[category][`show-${show.id}`].episode_runtime = info.mean_episode_run_time
       shows[category][`show-${show.id}`].episodes_watched = info.episodes_watched
       shows[category][`show-${show.id}`].seasons_watched = info.seasons_watched
       shows[category][`show-${show.id}`].number_of_episodes = info.number_of_episodes ? info.number_of_episodes : 0
@@ -132,6 +186,14 @@ class App extends Component {
       shows[category][`show-${show.id}`].poster_path = show.poster_path
       this.setState({shows})
       
+      fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=show&username=${this.state.user}&key=${serverKey}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': this.state.auth
+        },
+        body: JSON.stringify(shows[category][`show-${show.id}`])
+      })
+     
       message = `${show.name} successfully added to list!`
     }
     return message;
@@ -149,39 +211,145 @@ class App extends Component {
       books[category][`book-${book.id}`].start_date = start_date ? start_date : ""
       books[category][`book-${book.id}`].end_date = end_date ? end_date : ""
       books[category][`book-${book.id}`].score = score ? parseInt(score, 10) : 0
-      books[category][`book-${book.id}`].pageCount = book.volumeInfo.printedPageCount ? book.volumeInfo.printedPageCount : 0
+      books[category][`book-${book.id}`].page_count = book.volumeInfo.printedPageCount ? book.volumeInfo.printedPageCount : 0
       books[category][`book-${book.id}`].id = book.id
       books[category][`book-${book.id}`].title = book.volumeInfo.title
       books[category][`book-${book.id}`].path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
       this.setState({books})
       
+      fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=book&username=${this.state.user}&key=${serverKey}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': this.state.auth
+        },
+        body: JSON.stringify(books[category][`book-${book.id}`])
+      })
+
       message = `${book.volumeInfo.title} successfully added to list!`
     }
     return message;
   }
 
+  deleteMedia = (media, list, item, update) => {
+    let apiMedia;
+    if(media === 'books') {
+      apiMedia = 'book'
+      const books = {...this.state.books}
+      delete books[list][`book-${item.id}`]
+      this.setState({ books }, () => {update()})
+    } else if(media === 'tv') {
+      apiMedia = 'show'
+      const shows = {...this.state.shows}
+      delete shows[list][`show-${item.id}`]
+      this.setState({ shows }, () => {update()})
+    } else if(media === 'movies') {
+      apiMedia = 'movie'
+      const movies = {...this.state.movies}
+      delete movies[list][`movie-${item.id}`]
+      this.setState({ movies }, () => {update()})
+    }
+    
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/delete?id=${item.id}&list=${list}&media=${apiMedia}&username=${this.state.user}&key=${serverKey}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': this.state.auth
+      }
+    })
+  }
+
   fetchMovieList = (user) => {
-    this.setState({fetchedMovies: true})
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getMovies?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(movieList => {    
+      const movies = {...this.state.movies}
+      if(movieList !== '"FORBIDDEN"') {
+        movieList.completed.map((movie) => {
+          if(!movies.completed) movies.completed = {}
+          movies.completed[`movie-${movie.id}`] = movie
+        })
+        movieList.planning.map((movie) => {
+          if(!movies.planning) movies.planning = {}
+          movies.planning[`movie-${movie.id}`] = movie
+        })
+      }
+      this.setState({fetchedMovies: true, movies})
+    })
   }
 
   fetchShowList = (user) => {
-    this.setState({fetchedShows: true})
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getShows?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(showList => {   
+      const shows = {...this.state.shows}
+      if(showList !== '"FORBIDDEN"') {
+        showList.completed.map((show) => {
+          if(!shows.completed) shows.completed = {}
+          shows.completed[`show-${show.id}`] = show
+        })
+        showList.current.map((show) => {
+          if(!shows.current) shows.current = {}
+          shows.current[`show-${show.id}`] = show
+        })
+        showList.planning.map((show) => {
+          if(!shows.planning) shows.planning = {}
+          shows.planning[`show-${show.id}`] = show
+        })
+      }
+      this.setState({fetchedShows: true, shows})
+    })
   }
 
   fetchBookList = (user) => {
-    this.setState({fetchedBooks: true})
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getBooks?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(bookList => {   
+      const books = {...this.state.books}
+      if(bookList !== '"FORBIDDEN"') {
+        bookList.completed.map((book) => {
+          if(!books.completed) books.completed = {}
+          books.completed[`book-${book.id}`] = book
+        })
+        bookList.current.map((book) => {
+          if(!books.current) books.current = {}
+          books.current[`book-${book.id}`] = book
+        })
+        bookList.planning.map((book) => {
+          if(!books.planning) books.planning = {}
+          books.planning[`book-${book.id}`] = book
+        })
+      }
+      this.setState({fetchedBooks: true, books})
+    })
   }
 
   render() {
     return (
       <div className="App">
         <Switch>
+          <Route path="/sign-in" render={() =>
+            !this.signedIn() 
+            ? <SignIn signIn={this.signIn} />
+            : <Redirect to="/"/>
+          }/>
           <Route path="/" render={() =>
-              this.signedIn() 
+              this.signedIn() || !this.state.ready
               ? <Main 
                   movies={this.state.movies}
                   shows={this.state.shows}
                   books={this.state.books}
+                  deleteMedia={this.deleteMedia}
                   formatDuration={this.formatDuration}
                   fetchedMovies={this.state.fetchedMovies}
                   fetchedShows={this.state.fetchedShows}
@@ -189,7 +357,8 @@ class App extends Component {
                   getToday={this.getToday}
                   addMovie={this.addMovie}
                   addShow={this.addShow}
-                  addBook={this.addBook}               
+                  addBook={this.addBook}  
+                  signOut={this.signOut}             
                   {...this.props} 
                 />
               : <Redirect to="/sign-in" />
