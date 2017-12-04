@@ -10,6 +10,8 @@ public interface UserService {
 
     User getUser(String name);
     User addUser(String body);
+    User addUser(String username, String password);
+    User getUser(String username, String password);
 
     String getMovies(String name);
     String getSeries(String name);

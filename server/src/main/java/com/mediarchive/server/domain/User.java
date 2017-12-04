@@ -1,16 +1,12 @@
 package com.mediarchive.server.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.security.authentication.encoding.BasePasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 public class User implements Serializable {
-
-    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,19 +35,15 @@ public class User implements Serializable {
     @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "ROLE")
-    private String role;
-
     protected User() {
         this.mediaCompleted = new MediaList(this);
         this.mediaUnderway = new MediaList(this);
         this.mediaIntent = new MediaList(this);
     }
 
-    public User(String username, String password, String role) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.role = role;
         this.mediaCompleted = new MediaList(this);
         this.mediaUnderway = new MediaList(this);
         this.mediaIntent = new MediaList(this);
@@ -66,23 +58,11 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = encoder.encode(password);
+        this.password = password;
     }
 
     public String getPassword() {
         return password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public static BCryptPasswordEncoder getEncoder() {
-        return encoder;
     }
 
     public MediaList getMediaCompleted() {

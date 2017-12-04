@@ -18,7 +18,7 @@ public class Book implements Serializable {
     @ManyToOne
     private MediaList mediaList;
 
-    @Column(name = "API_ID")
+    @Column(name = "API_ID", nullable = false)
     private String id;
 
     @Column(name = "TITLE")
@@ -44,6 +44,7 @@ public class Book implements Serializable {
 
     public Book(MediaList mediaList, MediaDetails details) {
         this.mediaList = mediaList;
+
         this.id = details.getId();
         this.title = details.getTitle();
         this.score = details.getScore();

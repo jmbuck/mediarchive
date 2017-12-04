@@ -18,13 +18,13 @@ public class Series implements Serializable {
     @ManyToOne
     private MediaList mediaList;
 
-    @Column(name = "API_ID")
+    @Column(name = "API_ID", nullable = false)
     private String id;
 
-    @Column(name = "TITLE")
-    private String title;
+    @Column(name = "NAME")
+    private String name;
 
-    @Column(name = "score")
+    @Column(name = "SCORE")
     private int score;
 
     @Column(name = "START_DATE")
@@ -56,8 +56,9 @@ public class Series implements Serializable {
 
     public Series(MediaList mediaList, MediaDetails details) {
         this.mediaList = mediaList;
+
         this.id = details.getId();
-        this.title = details.getTitle();
+        this.name = details.getName();
         this.score = details.getScore();
         this.start_date = details.getStart_date();
         this.end_date = details.getEnd_date();
@@ -77,12 +78,12 @@ public class Series implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String title) {
+        this.name = title;
     }
 
     public int getScore() {
@@ -147,6 +148,14 @@ public class Series implements Serializable {
 
     public void setNumber_of_seasons(int number_of_seasons) {
         this.number_of_seasons = number_of_seasons;
+    }
+
+    public String getPoster_path() {
+        return poster_path;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
     }
 
     @Override

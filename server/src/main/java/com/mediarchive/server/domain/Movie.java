@@ -18,7 +18,7 @@ public class Movie implements Serializable {
     @ManyToOne
     private MediaList mediaList;
 
-    @Column(name = "API_ID")
+    @Column(name = "API_ID", nullable = false)
     private String id;
 
     @Column(name = "TITLE")
@@ -87,6 +87,14 @@ public class Movie implements Serializable {
 
     public void setRuntime(int runtime) {
         this.runtime = runtime;
+    }
+
+    public String getPoster_path() {
+        return poster_path;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
     }
 
     @Override

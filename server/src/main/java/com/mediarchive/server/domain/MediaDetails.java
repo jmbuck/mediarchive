@@ -10,6 +10,7 @@ public class MediaDetails implements Serializable {
     private int runtime;
     private int score;
     private String title;
+    private String name;
     private String watched_date;
     private int episode_runtime;
     private int number_of_episodes;
@@ -143,6 +144,14 @@ public class MediaDetails implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

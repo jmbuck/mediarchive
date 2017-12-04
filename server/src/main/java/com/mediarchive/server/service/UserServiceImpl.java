@@ -4,21 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediarchive.server.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-//@Component("userService")
-@Service("userService")
+@Component("userService")
 @Transactional
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -52,11 +46,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User getUser(String username, String password) {
+        User user = this.userRepository.findByUsername(username);
+        if (user != null) {
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public User addUser(String body) {
         User user = null;
         try {
             user = objectMapper.readValue(body, User.class);
-            user.setRole("USER");
             if (this.userRepository.findByUsername(user.getUsername()) == null) {
                 this.userRepository.save(user);
                 logger.info("Successfully created new user " + user.getUsername());
@@ -67,6 +71,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
         } catch (IOException e) {
             logger.error("Unsuccessful creation of new user");
+        }
+        return user;
+    }
+
+    @Override
+    public User addUser(String username, String password) {
+        User user = null;
+        if (this.userRepository.findByUsername(username) == null) {
+            user = new User(username, password);
+            this.userRepository.save(user);
         }
         return user;
     }
@@ -174,6 +188,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Series addCompletedSeries(String username, String body) {
+        System.out.println(body);
         Series series = null;
         try {
             MediaDetails details = objectMapper.readValue(body, MediaDetails.class);
@@ -408,12 +423,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         logger.error("Unsuccessful removal to user " + username + "'s intent books");
         return null;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User curruser = this.getUser(s);
-        UserDetails user = new org.springframework.security.core.userdetails.User(s, curruser.getPassword(), AuthorityUtils.createAuthorityList(curruser.getRole()));
-        return user;
     }
 }
