@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom'
 
 import '../css/Book.css'
 import { booksKey } from '../keys'
+import noCover from '../img/noCover.png'
 
 class Book extends Component {
 
@@ -143,7 +144,7 @@ class Book extends Component {
           {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
             path 
             ? <img src={path} alt="book cover" />
-            : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
+            : <img src={noCover} alt="TV show poster" />
           }
           <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderBookInfo(book);
@@ -217,7 +218,7 @@ class Book extends Component {
             {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
               path 
               ? <img src={path} alt="book cover" />
-              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="book cover" />
+              : <img src={noCover} alt="book cover" />
             }
           </div>
         </Link>

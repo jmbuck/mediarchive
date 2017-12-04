@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom'
 
 import '../css/Movie.css'
 import { TMDBKey } from '../keys'
+import noPoster from '../img/noPoster.png'
 
 class Movie extends Component {
 
@@ -146,7 +147,7 @@ class Movie extends Component {
           {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
             movie.poster_path 
             ? <img src={path} alt="movie poster" />
-            : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="movie poster" />
+            : <img src={noPoster} alt="movie poster" />
           }
           <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderMovieInfo(movie);
@@ -220,7 +221,7 @@ class Movie extends Component {
             {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
               movie.poster_path 
               ? <img src={path} alt="movie poster" />
-              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="movie poster" />
+              : <img src={noPoster} alt="movie poster" />
             }
           </div>
         </Link>

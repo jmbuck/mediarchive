@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom'
 
 import '../css/Show.css'
 import { TMDBKey } from '../keys'
+import noPoster from '../img/noPoster.png'
 
 class Show extends Component {
 
@@ -201,7 +202,7 @@ class Show extends Component {
           {/*Displays tv show poster. If poster does not exist, show "poster does not exist" image*/
             show.poster_path 
             ? <img src={path} alt="TV show poster" />
-            : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
+            : <img src={noPoster} alt="TV show poster" />
           }
           <Route exact path={this.state.infoPath} render={(navProps) => {
             return this.renderShowInfo(show);
@@ -275,7 +276,7 @@ class Show extends Component {
             {/*Displays show poster. If poster does not exist, show "poster does not exist" image*/
               show.poster_path 
               ? <img src={path} alt="TV show poster" />
-              : <img src="http://static01.mediaite.com/med/wp-content/uploads/gallery/possilbe-movie-pitches-culled-from-the-mediaite-comments-section/poster-not-available1.jpg" alt="TV show poster" />
+              : <img src={noPoster} alt="TV show poster" />
             }
           </div>
         </Link>
