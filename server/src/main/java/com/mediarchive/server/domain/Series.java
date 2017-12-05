@@ -21,7 +21,8 @@ public class Series implements Serializable {
     @Column(name = "API_ID", nullable = false)
     private String id;
 
-    @Column(name = "NAME")
+    @Lob
+    @Column(name = "NAME", length = 65536)
     private String name;
 
     @Column(name = "SCORE")
@@ -48,7 +49,11 @@ public class Series implements Serializable {
     @Column(name = "NUMBER_OF_SEASONS")
     private int number_of_seasons;
 
-    @Column(name = "POSTER_PATH")
+    @Column(name = "CATEGORY")
+    private String category;
+
+    @Lob
+    @Column(name = "POSTER_PATH", length = 65536)
     private String poster_path;
 
     protected Series() {
@@ -67,6 +72,7 @@ public class Series implements Serializable {
         this.episode_runtime = details.getEpisode_runtime();
         this.number_of_episodes = details.getNumber_of_episodes();
         this.number_of_seasons = details.getNumber_of_seasons();
+        this.category = details.getCategory();
         this.poster_path = details.getPoster_path();
     }
 
@@ -148,6 +154,14 @@ public class Series implements Serializable {
 
     public void setNumber_of_seasons(int number_of_seasons) {
         this.number_of_seasons = number_of_seasons;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getPoster_path() {

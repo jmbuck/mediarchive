@@ -21,7 +21,8 @@ public class Book implements Serializable {
     @Column(name = "API_ID", nullable = false)
     private String id;
 
-    @Column(name = "TITLE")
+    @Lob
+    @Column(name = "TITLE", length = 65536)
     private String title;
 
     @Column(name = "score")
@@ -36,7 +37,11 @@ public class Book implements Serializable {
     @Column(name = "PAGE_COUNT")
     private int page_count;
 
-    @Column(name = "PATH")
+    @Column(name = "CATEGORY")
+    private String category;
+
+    @Lob
+    @Column(name = "PATH", length = 65536)
     private String path;
 
     protected Book() {
@@ -51,6 +56,7 @@ public class Book implements Serializable {
         this.start_date = details.getStart_date();
         this.end_date = details.getEnd_date();
         this.page_count = details.getPage_count();
+        this.category = details.getCategory();
         this.path = details.getPath();
     }
 
@@ -100,6 +106,14 @@ public class Book implements Serializable {
 
     public void setPage_count(int page_count) {
         this.page_count = page_count;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getPath() {

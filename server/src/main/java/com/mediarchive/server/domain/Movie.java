@@ -21,7 +21,8 @@ public class Movie implements Serializable {
     @Column(name = "API_ID", nullable = false)
     private String id;
 
-    @Column(name = "TITLE")
+    @Lob
+    @Column(name = "TITLE", length = 65536)
     private String title;
 
     @Column(name = "score")
@@ -33,7 +34,11 @@ public class Movie implements Serializable {
     @Column(name = "RUNTIME")
     private int runtime;
 
-    @Column(name = "POSTER_PATH")
+    @Column(name = "CATEGORY")
+    private String category;
+
+    @Lob
+    @Column(name = "POSTER_PATH", length = 65536)
     private String poster_path;
 
     protected Movie() {
@@ -46,6 +51,7 @@ public class Movie implements Serializable {
         this.score = details.getScore();
         this.watched_date = details.getWatched_date();
         this.runtime = details.getRuntime();
+        this.category = details.getCategory();
         this.poster_path = details.getPoster_path();
     }
 
@@ -87,6 +93,14 @@ public class Movie implements Serializable {
 
     public void setRuntime(int runtime) {
         this.runtime = runtime;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getPoster_path() {

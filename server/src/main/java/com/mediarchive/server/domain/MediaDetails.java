@@ -20,6 +20,7 @@ public class MediaDetails implements Serializable {
     private int episodes_watched;
     private int seasons_watched;
     private int page_count;
+    private String category;
     private String poster_path;
     private String path;
 
@@ -128,6 +129,14 @@ public class MediaDetails implements Serializable {
 
     public void setPage_count(int page_count) {
         this.page_count = page_count;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getPoster_path() {
