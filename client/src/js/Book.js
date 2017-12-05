@@ -32,8 +32,16 @@ class Book extends Component {
     fetch(`https://www.googleapis.com/books/v1/volumes/${book.id}?key=${booksKey}`)
     .then(response => response.json())
     .then(detailedBook => {
+      if(!this.props.search) {
+        detailedBook.score = book.score
+        detailedBook.start_date = book.start_date
+        detailedBook.end_date = book.end_date
+        detailedBook.page_count = book.page_count
+        detailedBook.path = book.path
+        detailedBook.category = book.category
+      }
       this.setState({ 
-        book: detailedBook,  
+        book: detailedBook ? detailedBook : book,  
         fetched: true, 
       }, () => {
         if(callback) callback(detailedBook)
@@ -45,7 +53,7 @@ class Book extends Component {
     if(!this.state.fetched) {
       this.fetchBookInfo(book, this.quickAdd)
     } else {
-      const message = this.props.addBook('completed', '', '', 0, book)
+      const message = this.props.addBook('completed', '', '', 0, false, book)
       this.setState({onForm: false})
       this.props.displayMessage(message, true)
     }
@@ -55,14 +63,14 @@ class Book extends Component {
    return (
     <form className="book-form" onSubmit={(ev) => {
       ev.preventDefault();
-      const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, book)
+      const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, this.props.search ? false : true, book)
       if(this.props.search) this.props.displayMessage(message, true)
       this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
     }}>
       <div className="fields">
           <div className="category">
-              <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
               <input type="radio" name="category" value="current" defaultChecked={false}/>Reading<br/>
+              <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
               <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Read<br/>
           </div>
           <div className="optional">
@@ -149,7 +157,7 @@ class Book extends Component {
   }
 
   renderBook = (navProps, book, query, page, list) => {
-    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo || !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
     return (
       <div>
         <div className="white-content">
@@ -212,7 +220,7 @@ class Book extends Component {
     const page = this.props.match.params.page
     const list = this.props.match.params.list
     const book = {...this.state.book}
-    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo || !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
 
     return (
       <li className="Book">

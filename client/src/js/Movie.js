@@ -32,6 +32,11 @@ class Movie extends Component {
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
       .then(detailedMovie => {
+        if(!this.props.search) {
+          detailedMovie.score = movie.score
+          detailedMovie.watched_date = movie.watched_date
+          detailedMovie.category = movie.category
+        }
         this.setState({ 
           movie: detailedMovie,  
           fetched: true, 
@@ -45,7 +50,7 @@ class Movie extends Component {
     if(!this.state.fetched) {
       this.fetchMovieInfo(movie, this.quickAdd)
     } else {
-      const message = this.props.addMovie('completed', '', 0, movie)
+      const message = this.props.addMovie('completed', '', 0, false, movie)
       this.setState({onForm: false})
       this.props.displayMessage(message, true)
     }
@@ -108,7 +113,7 @@ class Movie extends Component {
     return (
         <form className="MovieForm" onSubmit={(ev) => {
             ev.preventDefault();
-            const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, movie)
+            const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, this.props.search ? false : true, movie)
             if(this.props.search) this.props.displayMessage(message, true)
             this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
         }}>

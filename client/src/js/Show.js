@@ -33,6 +33,15 @@ class Show extends Component {
     fetch(`https://api.themoviedb.org/3/tv/${show.id}?api_key=${TMDBKey}&append_to_response=credits`)
     .then(response => response.json())
     .then(detailedShow => {
+      if(!this.props.search) {
+        detailedShow.score = show.score
+        detailedShow.start_date = show.start_date
+        detailedShow.end_date = show.end_date
+        detailedShow.episode_runtime = show.episode_runtime
+        detailedShow.episodes_watched = show.episodes_watched
+        detailedShow.seasons_watched = show.seasons_watched
+        detailedShow.category = show.category
+      }
       this.setState({ 
         show: detailedShow,  
         fetched: true, 
@@ -56,7 +65,7 @@ class Show extends Component {
         number_of_episodes: show.number_of_episodes,
         number_of_seasons: show.number_of_seasons,
       }
-      const message = this.props.addShow(show, 'completed', info)
+      const message = this.props.addShow(show, 'completed', false, info)
       this.setState({onForm: false})
       this.props.displayMessage(message, true)
     }
@@ -90,14 +99,14 @@ class Show extends Component {
               number_of_episodes: show.number_of_episodes,
               number_of_seasons: show.number_of_seasons,
             }
-            const message = this.props.addShow(show, ev.target.category.value, info)
+            const message = this.props.addShow(show, ev.target.category.value, this.props.search ? false : true, info)
             if(this.props.search) this.props.displayMessage(message, true)
             this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
         }}>
             <div className="fields">
                 <div className="category">
-                    <input type="radio" name="category" value="completed" defaultChecked={true} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
                     <input type="radio" name="category" className="watching" value="current" defaultChecked={false} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
+                    <input type="radio" name="category" value="completed" defaultChecked={true} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
                     <input type="radio" name="category" value="planning" defaultChecked={false} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
                 </div>
                 <div className="optional">

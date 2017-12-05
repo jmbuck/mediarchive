@@ -137,14 +137,14 @@ class App extends Component {
     return false;
   }
 
-  addMovie = (category, date, score, movie) => {
+  addMovie = (category, date, score, edit, movie) => {
     const movies = {...this.state.movies}
     if(!movies[category]) {
       movies[category] = {}
     }
     
     let message = this.isDuplicate(movie, 'movie')
-    if(!message) {
+    if(!message || edit) {
       movies[category][`movie-${movie.id}`] = {}
       movies[category][`movie-${movie.id}`].watched_date = date ? date : ""
       movies[category][`movie-${movie.id}`].score = score ? parseInt(score, 10) : 0
@@ -152,7 +152,17 @@ class App extends Component {
       movies[category][`movie-${movie.id}`].id = movie.id
       movies[category][`movie-${movie.id}`].title = movie.title
       movies[category][`movie-${movie.id}`].poster_path = movie.poster_path
-      this.setState({movies})
+      movies[category][`movie-${movie.id}`].category = category
+
+
+      this.setState({movies}, () => {
+        if(edit) {
+          const oldCategory =  movie.category ? movie.category : category
+          if(category !== oldCategory) {
+            this.deleteMedia('movies', oldCategory, movies[oldCategory][`movie-${movie.id}`])
+          }
+        } 
+      })
       
       fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=movie&username=${this.state.user}&key=${serverKey}`, {
         method: 'POST',
@@ -167,14 +177,14 @@ class App extends Component {
     return message;
   }
 
-  addShow = (show, category, info) => {
+  addShow = (show, category, edit, info) => {
     const shows = {...this.state.shows}
     if(!shows[category]) {
       shows[category] = {}
     }
     
     let message = this.isDuplicate(show, 'show')
-    if(!message) {
+    if(!message || edit) {
       shows[category][`show-${show.id}`] = {}
       shows[category][`show-${show.id}`].start_date = info.start_date ? info.start_date : ""
       shows[category][`show-${show.id}`].end_date = info.end_date ? info.end_date : ""
@@ -187,7 +197,16 @@ class App extends Component {
       shows[category][`show-${show.id}`].id = show.id
       shows[category][`show-${show.id}`].name = show.name
       shows[category][`show-${show.id}`].poster_path = show.poster_path
-      this.setState({shows})
+      shows[category][`show-${show.id}`].category = category
+    
+      this.setState({shows}, () => {
+        if(edit) {
+          const oldCategory =  show.category ? show.category : category
+          if(category !== oldCategory) {
+            this.deleteMedia('tv', oldCategory, shows[oldCategory][`show-${show.id}`])
+          }
+        } 
+      })
       
       fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=show&username=${this.state.user}&key=${serverKey}`, {
         method: 'POST',
@@ -202,14 +221,14 @@ class App extends Component {
     return message;
   }
 
-  addBook = (category, start_date, end_date, score, book) => {
+  addBook = (category, start_date, end_date, score, edit, book) => {
     const books = {...this.state.books}
     if(!books[category]) {
       books[category] = {}
     }
     
     let message = this.isDuplicate(book, 'book')
-    if(!message) {
+    if(!message || edit) {
       books[category][`book-${book.id}`] = {}
       books[category][`book-${book.id}`].start_date = start_date ? start_date : ""
       books[category][`book-${book.id}`].end_date = end_date ? end_date : ""
@@ -218,16 +237,24 @@ class App extends Component {
       books[category][`book-${book.id}`].id = book.id
       books[category][`book-${book.id}`].title = book.volumeInfo.title
       books[category][`book-${book.id}`].path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
-      this.setState({books})
+      books[category][`book-${book.id}`].category = category
 
-      console.log(JSON.stringify(books[category][`book-${book.id}`]))
+      this.setState({books}, () => {
+        if(edit) {
+          const oldCategory =  book.category ? book.category : category
+          if(category !== oldCategory) {
+            this.deleteMedia('books', oldCategory, books[oldCategory][`book-${book.id}`])
+          }
+        } 
+      })
+
       fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=book&username=${this.state.user}&key=${serverKey}`, {
         method: 'POST',
         headers: {
           'Authorization': this.state.auth
         },
         body: JSON.stringify(books[category][`book-${book.id}`])
-      }).then(response => response.json()).then(data => console.log(data))
+      })
 
       message = `${book.volumeInfo.title} successfully added to list!`
     }
@@ -240,17 +267,17 @@ class App extends Component {
       apiMedia = 'book'
       const books = {...this.state.books}
       delete books[list][`book-${item.id}`]
-      this.setState({ books }, () => {update()})
+      this.setState({ books }, () => {if(update) update()})
     } else if(media === 'tv') {
       apiMedia = 'show'
       const shows = {...this.state.shows}
       delete shows[list][`show-${item.id}`]
-      this.setState({ shows }, () => {update()})
+      this.setState({ shows }, () => {if(update) update()})
     } else if(media === 'movies') {
       apiMedia = 'movie'
       const movies = {...this.state.movies}
       delete movies[list][`movie-${item.id}`]
-      this.setState({ movies }, () => {update()})
+      this.setState({ movies }, () => {if(update) update()})
     }
     
     fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/delete?id=${item.id}&list=${list}&media=${apiMedia}&username=${this.state.user}&key=${serverKey}`, {
