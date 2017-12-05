@@ -21,7 +21,6 @@ class Book extends Component {
       : `/books/${this.props.match.params.list}/${this.props.book.id}`,
       listPath: this.props.search ? `/search/books/${this.props.match.params.query}/${this.props.match.params.page}`
       : `/books/${this.props.match.params.list}`,
-      displayMessage: false
     }
   }
 
@@ -29,15 +28,27 @@ class Book extends Component {
     this.fetchBookInfo(this.state.book)
   }
 
-  fetchBookInfo = (book) => {
+  fetchBookInfo = (book, callback) => {
     fetch(`https://www.googleapis.com/books/v1/volumes/${book.id}?key=${booksKey}`)
     .then(response => response.json())
     .then(detailedBook => {
       this.setState({ 
         book: detailedBook,  
         fetched: true, 
+      }, () => {
+        if(callback) callback(detailedBook)
       })
     })
+  }
+
+  quickAdd = (book) => {
+    if(!this.state.fetched) {
+      this.fetchBookInfo(book, this.quickAdd)
+    } else {
+      const message = this.props.addBook('completed', '', '', 0, book)
+      this.setState({onForm: false})
+      this.props.displayMessage(message, true)
+    }
   }
 
   renderBookForm = (book) => {
@@ -45,7 +56,8 @@ class Book extends Component {
     <form className="book-form" onSubmit={(ev) => {
       ev.preventDefault();
       const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, book)
-      this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
+      if(this.props.search) this.props.displayMessage(message, true)
+      this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
     }}>
       <div className="fields">
           <div className="category">
@@ -156,12 +168,14 @@ class Book extends Component {
 
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({onForm: !this.state.onForm, displayMessage: false})
               if(this.state.onForm) {
                 this.props.history.push(this.state.infoPath)
               } else {
                 this.props.history.push(this.state.formPath)
               }
+              this.setState({onForm: !this.state.onForm}, () => {
+                if(this.props.search) this.props.displayMessage('', false)
+               })
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
         
@@ -178,7 +192,7 @@ class Book extends Component {
           
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({displayMessage: false})
+              if(this.props.search) this.props.displayMessage('', false)
               this.props.history.push(this.state.listPath)}
             }
           >Close</button>
@@ -186,7 +200,7 @@ class Book extends Component {
         </div>
 
         <div className="black-overlay" onClick={(ev) => {
-          this.setState({displayMessage: false})
+          if(this.props.search) this.props.displayMessage('', false)
           this.props.history.push(this.state.listPath)
         }}></div>
       </div>
@@ -222,6 +236,10 @@ class Book extends Component {
             }
           </div>
         </Link>
+        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+              this.quickAdd(book)
+            }
+        }>Quick add</button>}
       </li>
     )
   }

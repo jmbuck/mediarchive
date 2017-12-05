@@ -220,13 +220,14 @@ class App extends Component {
       books[category][`book-${book.id}`].path = !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
       this.setState({books})
 
+      console.log(JSON.stringify(books[category][`book-${book.id}`]))
       fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/add?list=${category}&media=book&username=${this.state.user}&key=${serverKey}`, {
         method: 'POST',
         headers: {
           'Authorization': this.state.auth
         },
         body: JSON.stringify(books[category][`book-${book.id}`])
-      })
+      }).then(response => response.json()).then(data => console.log(data))
 
       message = `${book.volumeInfo.title} successfully added to list!`
     }
