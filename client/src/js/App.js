@@ -4,6 +4,7 @@ import base64 from 'base-64'
 
 import Main from './Main'
 import SignIn from './SignIn'
+import SignUp from './SignUp'
 import '../css/App.css'
 import { serverKey } from '../keys'
 
@@ -38,6 +39,84 @@ class App extends Component {
     })
   }
 
+  fetchMovieList = (user) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getMovies?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(movieList => {    
+      const movies = {...this.state.movies}
+      if(movieList !== '"FORBIDDEN"') {
+        movieList.completed.forEach((movie) => {
+          if(!movies.completed) movies.completed = {}
+          movies.completed[`movie-${movie.id}`] = movie
+        })
+        movieList.planning.forEach((movie) => {
+          if(!movies.planning) movies.planning = {}
+          movies.planning[`movie-${movie.id}`] = movie
+        })
+      }
+      this.setState({fetchedMovies: true, movies})
+    })
+  }
+
+  fetchShowList = (user) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getShows?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(showList => {   
+      const shows = {...this.state.shows}
+      if(showList !== '"FORBIDDEN"') {
+        showList.completed.forEach((show) => {
+          if(!shows.completed) shows.completed = {}
+          shows.completed[`show-${show.id}`] = show
+        })
+        showList.current.forEach((show) => {
+          if(!shows.current) shows.current = {}
+          shows.current[`show-${show.id}`] = show
+        })
+        showList.planning.forEach((show) => {
+          if(!shows.planning) shows.planning = {}
+          shows.planning[`show-${show.id}`] = show
+        })
+      }
+      this.setState({fetchedShows: true, shows})
+    })
+  }
+
+  fetchBookList = (user) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getBooks?username=${user}&key=${serverKey}`, {
+      headers: {
+        'Authorization': this.state.auth
+      }}
+    )
+    .then(response => response.json())
+    .then(bookList => {   
+      const books = {...this.state.books}
+      if(bookList !== '"FORBIDDEN"') {
+        bookList.completed.forEach((book) => {
+          if(!books.completed) books.completed = {}
+          books.completed[`book-${book.id}`] = book
+        })
+        bookList.current.forEach((book) => {
+          if(!books.current) books.current = {}
+          books.current[`book-${book.id}`] = book
+        })
+        bookList.planning.forEach((book) => {
+          if(!books.planning) books.planning = {}
+          books.planning[`book-${book.id}`] = book
+        })
+      }
+      this.setState({fetchedBooks: true, books})
+    })
+  }
+
+
   fetchLists = () => {
     this.fetchMovieList(this.state.user)
     this.fetchShowList(this.state.user)
@@ -45,21 +124,39 @@ class App extends Component {
   }
 
   signIn = (user, password) => {
-    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/login?username=${user}`, {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/login?username=${user}&key=${serverKey}`, {
       mode: 'cors',
       headers: {
         'Authorization': `${base64.encode(`${user}:${password}`)}`
       }
     })
-    .then(response => response.text())
+    .then(response => response.json())
     .then(data => {
-      if(data === '"OK"') {
+      if(data === 'OK') {
         const auth = base64.encode(`${user}:${password}`)
         localStorage.setItem('uid', auth)
         localStorage.setItem('user', user)
         this.setState({ user, auth, signedIn: true, ready: true }, this.fetchLists)
       } else {
         alert('Invalid username or password')
+      }
+    })
+  }
+
+  signUp = (user, password) => {
+    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/addUser?key=${serverKey}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        username: user,
+        password: base64.encode(`${user}:${password}`)
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data !== 'BAD_REQUEST') {
+        this.signIn(user, password)
+      } else {
+        alert(`The username ${user} is taken!`)
       }
     })
   }
@@ -288,90 +385,18 @@ class App extends Component {
     })
   }
 
-  fetchMovieList = (user) => {
-    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getMovies?username=${user}&key=${serverKey}`, {
-      headers: {
-        'Authorization': this.state.auth
-      }}
-    )
-    .then(response => response.json())
-    .then(movieList => {    
-      const movies = {...this.state.movies}
-      if(movieList !== '"FORBIDDEN"') {
-        movieList.completed.forEach((movie) => {
-          if(!movies.completed) movies.completed = {}
-          movies.completed[`movie-${movie.id}`] = movie
-        })
-        movieList.planning.forEach((movie) => {
-          if(!movies.planning) movies.planning = {}
-          movies.planning[`movie-${movie.id}`] = movie
-        })
-      }
-      this.setState({fetchedMovies: true, movies})
-    })
-  }
-
-  fetchShowList = (user) => {
-    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getShows?username=${user}&key=${serverKey}`, {
-      headers: {
-        'Authorization': this.state.auth
-      }}
-    )
-    .then(response => response.json())
-    .then(showList => {   
-      const shows = {...this.state.shows}
-      if(showList !== '"FORBIDDEN"') {
-        showList.completed.forEach((show) => {
-          if(!shows.completed) shows.completed = {}
-          shows.completed[`show-${show.id}`] = show
-        })
-        showList.current.forEach((show) => {
-          if(!shows.current) shows.current = {}
-          shows.current[`show-${show.id}`] = show
-        })
-        showList.planning.forEach((show) => {
-          if(!shows.planning) shows.planning = {}
-          shows.planning[`show-${show.id}`] = show
-        })
-      }
-      this.setState({fetchedShows: true, shows})
-    })
-  }
-
-  fetchBookList = (user) => {
-    fetch(`http://mediarchive-env.us-east-1.elasticbeanstalk.com/getBooks?username=${user}&key=${serverKey}`, {
-      headers: {
-        'Authorization': this.state.auth
-      }}
-    )
-    .then(response => response.json())
-    .then(bookList => {   
-      const books = {...this.state.books}
-      if(bookList !== '"FORBIDDEN"') {
-        bookList.completed.forEach((book) => {
-          if(!books.completed) books.completed = {}
-          books.completed[`book-${book.id}`] = book
-        })
-        bookList.current.forEach((book) => {
-          if(!books.current) books.current = {}
-          books.current[`book-${book.id}`] = book
-        })
-        bookList.planning.forEach((book) => {
-          if(!books.planning) books.planning = {}
-          books.planning[`book-${book.id}`] = book
-        })
-      }
-      this.setState({fetchedBooks: true, books})
-    })
-  }
-
   render() {
     return (
       <div className="App">
         <Switch>
-          <Route path="/sign-in" render={() =>
+          <Route path="/sign-in" render={(navProps) =>
             !this.signedIn() 
-            ? <SignIn signIn={this.signIn} />
+            ? <SignIn signIn={this.signIn} {...navProps} />
+            : <Redirect to="/"/>
+          }/>
+          <Route path="/sign-up" render={(navProps) =>
+            !this.signedIn() 
+            ? <SignUp signUp={this.signUp} {...navProps} />
             : <Redirect to="/"/>
           }/>
           <Route path="/" render={() =>
