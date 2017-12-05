@@ -3,6 +3,7 @@ package com.mediarchive.server.service;
 import com.mediarchive.server.domain.*;
 import org.springframework.stereotype.Component;
 
+import javax.print.attribute.standard.Media;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -62,10 +63,27 @@ public class MediaListServiceImpl implements MediaListService {
     public Movie getMovie(MediaList mediaList, String id) {
         return this.movieRepository.findByMediaListAndId(mediaList, id);
     }
-
+    
     @Override
     public Movie addMovie(MediaList mediaList, MediaDetails details) {
         Movie movie = new Movie(mediaList, details);
+        return addMovie(mediaList, movie);
+    }
+    
+    @Override
+    public Series addSeries(MediaList mediaList, MediaDetails details) {
+        Series series = new Series(mediaList, details);
+        return addSeries(mediaList, series);
+    }
+    
+    @Override
+    public Book addBook(MediaList mediaList, MediaDetails details) {
+        Book book = new Book(mediaList, details);
+        return addBook(mediaList, book);
+    }
+
+    @Override
+    public Movie addMovie(MediaList mediaList, Movie movie) {
         Movie inRepo = movieRepository.findByMediaListAndId(mediaList, movie.getId());
         if (inRepo != null) {
             removeMovie(mediaList, inRepo.getId());
@@ -105,8 +123,7 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public Series addSeries(MediaList mediaList, MediaDetails details) {
-        Series series = new Series(mediaList, details);
+    public Series addSeries(MediaList mediaList, Series series) {
         Series inRepo = seriesRepository.findByMediaListAndId(mediaList, series.getId());
         if (inRepo != null) {
             removeSeries(mediaList, inRepo.getId());
@@ -150,9 +167,9 @@ public class MediaListServiceImpl implements MediaListService {
     }
 
     @Override
-    public Book addBook(MediaList mediaList, MediaDetails details) {
-        Book book = new Book(mediaList, details);
+    public Book addBook(MediaList mediaList,Book book) {
         Book inRepo = bookRepository.findByMediaListAndId(mediaList, book.getId());
+        System.out.println("AddBook: mediaList: " + mediaList + " | inRepo: " + inRepo);
         if (inRepo != null) {
             removeBook(mediaList, inRepo.getId());
         }
@@ -167,12 +184,21 @@ public class MediaListServiceImpl implements MediaListService {
             s.updateTotalPagesCount(1);
         }
         this.statisticsRepository.save(s);
-        return this.bookRepository.save(book);
+        Book save = this.bookRepository.save(book);
+        System.out.println(bookRepository.findByMediaList(mediaList));
+        while (bookRepository.findByMediaList(mediaList).isEmpty()) {
+                save = this.bookRepository.save(book);
+                System.out.println(bookRepository.findByMediaList(mediaList));
+        }
+        System.out.println(save.getTitle());
+        return save;
     }
 
     @Override
     public Book removeBook(MediaList mediaList, String id) {
         Book book = getBook(mediaList, id);
+        System.out.println("Remove Book");
+        System.out.println("Remove MediaList: " + mediaList + " | " + getBooks(mediaList).toString());
         if (book != null) {
             Statistics s = this.statisticsRepository.findByMediaList(mediaList);
             s.updateTotalBooks(-1);
@@ -187,6 +213,7 @@ public class MediaListServiceImpl implements MediaListService {
             this.statisticsRepository.save(s);
             this.bookRepository.delete(book);
         }
+        System.out.println("Remove MediaList: " + mediaList + " | " + getBooks(mediaList).toString());
         return book;
     }
 }

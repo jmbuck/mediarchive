@@ -10,13 +10,16 @@ public interface UserService {
 
     User getUser(String name);
     User addUser(String body);
-    User addUser(String username, String password);
     User getUser(String username, String password);
 
     String getMovies(String name);
     String getSeries(String name);
     String getBooks(String name);
     String getStats(String name);
+
+    Movie updateMovie(String name, String o, String n, String id);
+    Series updateSeries(String name, String o, String n, String id);
+    Book updateBook(String name, String o, String n, String id);
 
     //----- COMPLETED -----
     Movie addCompletedMovie(String name, String details);

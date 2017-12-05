@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -18,9 +17,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Value("${spring.api.key}")
     private String api_key;
@@ -122,6 +118,26 @@ public class UserController {
         }
         //could not parse body into movie or username doesn't exist
         return toReturn;
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public @ResponseBody Object updateMedia(@RequestParam("oldlist") String oldlist, @RequestParam("newlist") String newlist, @RequestParam("media") String media, @RequestParam("id") String id, @RequestParam("username") String username, @RequestParam("key") String key, @RequestHeader HttpHeaders headers){
+        if (!checkKey(key) || !checkCredentials(username, headers.getFirst("Authorization"))) return HttpStatus.FORBIDDEN;
+        Object toReturn = null;
+        if (media.equalsIgnoreCase("movie")) {
+            toReturn = userService.updateMovie(username, oldlist, newlist, id);
+        }
+        else if (media.equalsIgnoreCase("show")) {
+            toReturn = userService.updateSeries(username, oldlist, newlist, id);
+        }
+        else if (media.equalsIgnoreCase("book")) {
+            System.out.println("In controller");
+            toReturn = userService.updateBook(username, oldlist, newlist, id);
+        }
+        if (toReturn != null) {
+            return toReturn;
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)

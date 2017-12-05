@@ -76,13 +76,102 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(String username, String password) {
-        User user = null;
-        if (this.userRepository.findByUsername(username) == null) {
-            user = new User(username, password);
-            this.userRepository.save(user);
+    public Movie updateMovie(String name, String o, String n, String id) {
+        User user = getUser(name);
+        Movie movie = null;
+        if (user != null) {
+            if (o.equalsIgnoreCase("completed")) {
+                if (n.equalsIgnoreCase("planning")) {
+                    Movie toSave = this.mediaListService.removeMovie(user.getMediaCompleted(), id);
+                    movie = this.mediaListService.addMovie(user.getMediaIntent(), toSave);
+                }
+            }
+            else if (o.equalsIgnoreCase("planning")) {
+                if (n.equalsIgnoreCase("completed")) {
+                    Movie toSave = this.mediaListService.removeMovie(user.getMediaIntent(), id);
+                    movie = this.mediaListService.addMovie(user.getMediaCompleted(), toSave);
+                }
+            }
         }
-        return user;
+        return movie;
+    }
+
+    @Override
+    public Series updateSeries(String name, String o, String n, String id) {
+        User user = getUser(name);
+        Series series = null;
+        if (user != null) {
+            if (o.equalsIgnoreCase("completed")) {
+                if (n.equalsIgnoreCase("planning")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaCompleted(), id);
+                    series = this.mediaListService.addSeries(user.getMediaIntent(), toSave);
+                }
+                else if (n.equalsIgnoreCase("current")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaCompleted(), id);
+                    series = this.mediaListService.addSeries(user.getMediaUnderway(), toSave);
+                }
+            }
+            else if (o.equalsIgnoreCase("planning")) {
+                if (n.equalsIgnoreCase("completed")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaIntent(), id);
+                    series = this.mediaListService.addSeries(user.getMediaCompleted(), toSave);
+                }
+                else if (n.equalsIgnoreCase("current")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaIntent(), id);
+                    series = this.mediaListService.addSeries(user.getMediaUnderway(), toSave);
+                }
+            }
+            else if (o.equalsIgnoreCase("current")) {
+                if (n.equalsIgnoreCase("completed")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaUnderway(), id);
+                    series = this.mediaListService.addSeries(user.getMediaCompleted(), toSave);
+                }
+                else if (n.equalsIgnoreCase("planning")) {
+                    Series toSave = this.mediaListService.removeSeries(user.getMediaUnderway(), id);
+                    series = this.mediaListService.addSeries(user.getMediaIntent(), toSave);
+                }
+            }
+        }
+        return series;
+    }
+    
+    @Override
+    public Book updateBook(String name, String o, String n, String id) {
+        User user = getUser(name);
+        Book book = null;
+        if (user != null) {
+            if (o.equalsIgnoreCase("completed")) {
+                if (n.equalsIgnoreCase("planning")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaCompleted(), id);
+                    book = this.mediaListService.addBook(user.getMediaIntent(), toSave);
+                }
+                else if (n.equalsIgnoreCase("current")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaCompleted(), id);
+                    book = this.mediaListService.addBook(user.getMediaUnderway(), toSave);
+                }
+            }
+            else if (o.equalsIgnoreCase("planning")) {
+                if (n.equalsIgnoreCase("completed")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaIntent(), id);
+                    book = this.mediaListService.addBook(user.getMediaCompleted(), toSave);
+                }
+                else if (n.equalsIgnoreCase("current")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaIntent(), id);
+                    book = this.mediaListService.addBook(user.getMediaUnderway(), toSave);
+                }
+            }
+            else if (o.equalsIgnoreCase("current")) {
+                if (n.equalsIgnoreCase("completed")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaUnderway(), id);
+                    book = this.mediaListService.addBook(user.getMediaCompleted(), toSave);
+                }
+                else if (n.equalsIgnoreCase("planning")) {
+                    Book toSave = this.mediaListService.removeBook(user.getMediaUnderway(), id);
+                    book = this.mediaListService.addBook(user.getMediaIntent(), toSave);
+                }
+            }
+        }
+        return book;
     }
 
     @Override

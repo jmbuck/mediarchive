@@ -20,6 +20,8 @@ public interface MediaListService {
 
     Movie addMovie(MediaList mediaList, MediaDetails details);
 
+    Movie addMovie(MediaList mediaList, Movie movie);
+
     Movie removeMovie(MediaList mediaList, String id);
 
     Series getSeries(MediaList mediaList, String id);
@@ -28,6 +30,8 @@ public interface MediaListService {
 
     Series addSeries(MediaList mediaList, MediaDetails details);
 
+    Series addSeries(MediaList mediaList, Series series);
+
     Series removeSeries(MediaList mediaList, String id);
 
     Book getBook(MediaList mediaList, String id);
@@ -35,6 +39,8 @@ public interface MediaListService {
     //Book getBook(MediaList mediaList, int index);
 
     Book addBook(MediaList mediaList, MediaDetails details);
+
+    Book addBook(MediaList mediaList, Book book);
 
     Book removeBook(MediaList mediaList, String id);
 
