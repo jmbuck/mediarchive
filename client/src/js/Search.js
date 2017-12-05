@@ -14,6 +14,7 @@ class Search extends Component {
     this.state = {
         results: [],
         fetched: false,
+        displayMessage: false,
     }
   }
 
@@ -54,6 +55,10 @@ class Search extends Component {
         this.props.history.push(`/search/movies/${query}/${page}`)
       } 
     }
+  }
+
+  displayMessage = (message, display) => {
+    this.setState({displayMessage: display, message})
   }
 
   fetchBooks = (query, page) => {
@@ -127,6 +132,7 @@ class Search extends Component {
             index={i}
             movie={result}
             search={true}
+            displayMessage={this.displayMessage}
             {...this.props}
           />)}
         </ul>
@@ -139,6 +145,7 @@ class Search extends Component {
             index={i}
             show={result}
             search={true}
+            displayMessage={this.displayMessage}
             {...this.props}
           />)}
         </ul>
@@ -151,6 +158,7 @@ class Search extends Component {
             index={i}
             book={result}
             search={true}
+            displayMessage={this.displayMessage}
             {...this.props}
           />)}
         </ul>
@@ -165,6 +173,11 @@ class Search extends Component {
 
     return (
       <div className="Search">
+        {
+        this.state.displayMessage 
+        ? <div className="message">{this.state.message}</div>
+        : <div className="message"></div>
+        }
         {this.renderResults(media)}
         <div className="page">
           {(() => {

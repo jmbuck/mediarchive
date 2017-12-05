@@ -21,7 +21,6 @@ class Show extends Component {
       : `/tv/${this.props.match.params.list}/${this.props.show.id}`,
       listPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}`
       : `/tv/${this.props.match.params.list}`,
-      displayMessage: false,
       watching: false
     }
   }
@@ -30,15 +29,37 @@ class Show extends Component {
     this.fetchShowInfo(this.state.show)
   }
 
-  fetchShowInfo = (show) => {
+  fetchShowInfo = (show, callback) => {
     fetch(`https://api.themoviedb.org/3/tv/${show.id}?api_key=${TMDBKey}&append_to_response=credits`)
     .then(response => response.json())
     .then(detailedShow => {
       this.setState({ 
         show: detailedShow,  
         fetched: true, 
+      }, () => {
+        if(callback) callback(detailedShow)
       })
     })
+  }
+
+  quickAdd = (show) => {
+    if(!this.state.fetched) {
+      this.fetchShowInfo(show, this.quickAdd)
+    } else {
+      const info = {
+        episodes_watched: show.number_of_episodes,
+        seasons_watched: show.number_of_seasons,
+        start_date: '',
+        end_date: '',
+        score: 0,
+        mean_episode_run_time: show.episode_run_time ? Math.min(...show.episode_run_time) : 0,
+        number_of_episodes: show.number_of_episodes,
+        number_of_seasons: show.number_of_seasons,
+      }
+      const message = this.props.addShow(show, 'completed', info)
+      this.setState({onForm: false})
+      this.props.displayMessage(message, true)
+    }
   }
 
   getEpisodeCount = (show, currSeason, episode) => {
@@ -70,7 +91,8 @@ class Show extends Component {
               number_of_seasons: show.number_of_seasons,
             }
             const message = this.props.addShow(show, ev.target.category.value, info)
-            this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
+            if(this.props.search) this.props.displayMessage(message, true)
+            this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
         }}>
             <div className="fields">
                 <div className="category">
@@ -140,12 +162,6 @@ class Show extends Component {
     return (
       <div className="show-info">
         {
-        this.state.displayMessage 
-        ? <div className="message">{this.state.message}</div>
-        : <div className="message"></div>
-        }
-
-        {
         show.overview 
         ? <div className="synopsis">Synopsis: {show.overview}</div>
         : <div className="synopsis">No synopsis available.</div>
@@ -214,12 +230,14 @@ class Show extends Component {
 
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({onForm: !this.state.onForm, displayMessage: false})
               if(this.state.onForm) {
                 this.props.history.push(this.state.infoPath)
               } else {
                 this.props.history.push(this.state.formPath)
               }
+              this.setState({onForm: !this.state.onForm}, () => {
+               if(this.props.search) this.props.displayMessage('', false)
+              })
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
@@ -236,7 +254,7 @@ class Show extends Component {
           
           <button className="btn btn-primary" 
             onClick={() => {
-              this.setState({displayMessage: false})
+              if(this.props.search) this.props.displayMessage('', false)
               this.props.history.push(this.state.listPath)
             }}
           >Close</button>
@@ -244,7 +262,7 @@ class Show extends Component {
         </div>
 
         <div className="black-overlay" onClick={() => {
-          this.setState({displayMessage: false})
+          if(this.props.search) this.props.displayMessage('', false)
           this.props.history.push(this.state.listPath)
         }}></div>
       </div>
@@ -280,6 +298,10 @@ class Show extends Component {
             }
           </div>
         </Link>
+        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+              this.quickAdd(show)
+            }
+        }>Quick add</button>}
       </li>
     )
   }

@@ -21,7 +21,6 @@ class Movie extends Component {
       : `/movies/${this.props.match.params.list}/${this.props.movie.id}`,
       listPath: this.props.search ? `/search/movies/${this.props.match.params.query}/${this.props.match.params.page}`
       : `/movies/${this.props.match.params.list}`,
-      displayMessage: false
     }
   }
 
@@ -29,15 +28,27 @@ class Movie extends Component {
     this.fetchMovieInfo(this.state.movie)
   }
 
-  fetchMovieInfo = (movie) => {
+  fetchMovieInfo = (movie, callback) => {
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
       .then(detailedMovie => {
         this.setState({ 
           movie: detailedMovie,  
           fetched: true, 
+        }, () => {
+          if(callback) callback(detailedMovie)
         })
       })
+  }
+
+  quickAdd = (movie) => {
+    if(!this.state.fetched) {
+      this.fetchMovieInfo(movie, this.quickAdd)
+    } else {
+      const message = this.props.addMovie('completed', '', 0, movie)
+      this.setState({onForm: false})
+      this.props.displayMessage(message, true)
+    }
   }
 
   renderMovieInfo = (movie) => {
@@ -50,11 +61,6 @@ class Movie extends Component {
     }
     return (
       <div className="movie-info">
-        {
-        this.state.displayMessage 
-        ? <div className="message">{this.state.message}</div>
-        : <div className="message"></div>
-        }
         {
         movie.overview 
         ? <div className="synopsis">Synopsis: {movie.overview}</div>
@@ -103,7 +109,8 @@ class Movie extends Component {
         <form className="MovieForm" onSubmit={(ev) => {
             ev.preventDefault();
             const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, movie)
-            this.setState({onForm: false, message, displayMessage: true}, () => {this.props.history.push(this.state.infoPath)})
+            if(this.props.search) this.props.displayMessage(message, true)
+            this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
         }}>
             <div className="fields">
                 <div className="category">
@@ -159,13 +166,14 @@ class Movie extends Component {
 
           <button className="btn btn-primary" 
             onClick={() => {
-
               if(this.state.onForm) {
                 this.props.history.push(this.state.infoPath)
               } else {
                 this.props.history.push(this.state.formPath)
               }
-              this.setState({onForm: !this.state.onForm, displayMessage: false})
+              this.setState({onForm: !this.state.onForm}, () => {
+                if(this.props.search) this.props.displayMessage('', false)
+              })
             }}
           >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
 
@@ -181,14 +189,14 @@ class Movie extends Component {
 
           <button className="btn btn-primary" 
             onClick={() => { 
-              this.setState({displayMessage: false})
+              if(this.props.search) this.props.displayMessage('', false)
               this.props.history.push(this.state.listPath)
             }}
           >Close</button>
         </div>
 
         <div className="black-overlay" onClick={() => { 
-              this.setState({displayMessage: false})
+              if(this.props.search) this.props.displayMessage('', false)
               this.props.history.push(this.state.listPath)
         }}></div>
       </div>
@@ -225,6 +233,10 @@ class Movie extends Component {
             }
           </div>
         </Link>
+        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+              this.quickAdd(movie)
+            }
+        }>Quick add</button>}
       </li>
     )
   }
