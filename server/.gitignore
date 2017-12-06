@@ -25,3 +25,4 @@ nbdist/
 
 ### Secrets ###
 src/main/resources/application-secret.properties
+src/main/resources/keystore.p12
