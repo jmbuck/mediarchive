@@ -185,12 +185,6 @@ public class MediaListServiceImpl implements MediaListService {
         }
         this.statisticsRepository.save(s);
         Book save = this.bookRepository.save(book);
-        System.out.println(bookRepository.findByMediaList(mediaList));
-        while (bookRepository.findByMediaList(mediaList).isEmpty()) {
-                save = this.bookRepository.save(book);
-                System.out.println(bookRepository.findByMediaList(mediaList));
-        }
-        System.out.println(save.getTitle());
         return save;
     }
 

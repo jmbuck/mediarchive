@@ -35,6 +35,9 @@ public class User implements Serializable {
     @Column(name = "PASSWORD")
     private String password;
 
+    @Column(name = "GENERATED")
+    private String generated;
+
     protected User() {
         this.mediaCompleted = new MediaList(this);
         this.mediaUnderway = new MediaList(this);

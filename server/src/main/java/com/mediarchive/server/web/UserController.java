@@ -7,13 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.nio.charset.Charset;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
+import java.util.Random;
 
 @Controller
 public class UserController {
+
+    private byte[] publicKey;
+
+    private byte[] privateKey;
 
     @Autowired
     private UserService userService;
@@ -191,23 +207,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
-    public @ResponseBody Object login(@RequestHeader HttpHeaders headers, @RequestParam("username") String username) {
-        boolean b = checkCredentials(username, headers.getFirst("Authorization"));
-        if (b) {
-            return HttpStatus.OK;
-        }
-        else {
-            return HttpStatus.FORBIDDEN;
-        }
+    public @ResponseBody Object login(@RequestHeader HttpHeaders headers, @RequestParam("username") String username, @RequestParam("key") String key) {
+        if (!checkKey(key) || !checkCredentials(username, headers.getFirst("Authorization"))) return HttpStatus.FORBIDDEN;
+        return HttpStatus.OK;
     }
 
     @RequestMapping(value = "addUser", method = RequestMethod.POST)
     public @ResponseBody Object addUser(@RequestBody String body, @RequestParam("key") String key) {
-        User user = null;
-        if (checkKey(key)) {
-            user = userService.addUser(body);
+        if (!checkKey(key)) return HttpStatus.FORBIDDEN;
+        User user = userService.addUser(body);
+        if (user != null) {
+            return user;
         }
-        return user;
+        return HttpStatus.BAD_REQUEST;
     }
 
     private boolean checkCredentials(String username, String password) {
@@ -218,10 +230,96 @@ public class UserController {
         return false;
     }
 
+    private String decrypt(String encoded) {
+        try {
+            PrivateKey key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(privateKey));
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.PRIVATE_KEY, key);
+            byte[] decryptedBytes = cipher.doFinal(encoded.getBytes());
+            String s = new String(decryptedBytes);
+            System.out.println(s);
+            return s;
+
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    private String encrypt(String toEncode) {
+        try {
+            PublicKey key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
+
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.PUBLIC_KEY, key);
+
+            byte[] encryptedBytes = cipher.doFinal(toEncode.getBytes());
+            String s = new String(encryptedBytes);
+            System.out.println(s);
+            return s;
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "secureLogin", method = RequestMethod.GET)
+    private ResponseEntity<?> secureLogin(@RequestBody byte[] encoded, @RequestParam("key") String key) {
+        if (!checkKey(key)) {
+            return new ResponseEntity("FORBIDDEN", HttpStatus.FORBIDDEN);
+        }
+        byte[] array = new byte[15];
+        new Random().nextBytes(array);
+        String loginHeader = new String(array, Charset.forName("UTF-8"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Quick-Login", loginHeader);
+        return new ResponseEntity("Success", headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "secureAddUser", method = RequestMethod.POST)
+    private ResponseEntity<?> secureAddUser(@RequestBody byte[] encoded, @RequestParam("key") String key) {
+        return null;
+    }
+
     private boolean checkKey(String key) {
         if (key.equals(api_key)) {
             return true;
         }
         return false;
+    }
+
+    @RequestMapping(value = "getKey", method = RequestMethod.GET)
+    private @ResponseBody Object getPublicKey(@RequestParam("key") String key) {
+        if (!checkKey(key)) return HttpStatus.FORBIDDEN;
+        return publicKey;
+    }
+
+    @RequestMapping(value = "encrypt")
+    private @ResponseBody Object encryptMap(@RequestParam("code") String toEncode) {
+        return encrypt(toEncode).getBytes();
+    }
+
+    @RequestMapping(value = "decrypt")
+    private @ResponseBody Object decryptMap(@RequestParam("code") String toDecode) {
+        return decrypt(toDecode);
+    }
+
+    @PostConstruct
+    private void init() {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+            keyGen.initialize(512, random);
+
+            KeyPair generateKeyPair = keyGen.generateKeyPair();
+
+            publicKey = generateKeyPair.getPublic().getEncoded();
+            privateKey = generateKeyPair.getPrivate().getEncoded();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
     }
 }
