@@ -1,5 +1,5 @@
 .List {
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
 }
 
 .List .media-list {
@@ -7,6 +7,7 @@
     display: flex;
     flex-wrap: wrap;
     padding-left: 0;
+    margin-bottom: 0;
 }
 
 .List .preview {
@@ -19,13 +20,39 @@
     text-decoration: inherit;
 }
 
+.List .btn {
+    background-color: #116466;
+    color: #66FCF1;
+    border-color: #116466;
+    width: 20%;
+}
+
+.List .btn:hover {
+    border-color: #802BB1 !important;
+    background-color : #802BB1 !important;
+    color: #152833 !important;
+}
+
 .List .active {
+    background-color: #66FCF1 !important;
+    color: #116466 !important;
+    border-color: #66FCF1 !important;
     box-shadow: none !important;
     user-select: none !important;
 }
 
 .List .list-nav {
     margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-left: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.List .list-container {
+    margin-top: 2rem;
+}
+
+.List h1 {
+    margin-left: 1rem;
+    color: #802BB1 !important;
 }

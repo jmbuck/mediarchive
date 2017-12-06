@@ -1,7 +1,11 @@
 .Header {
-    background-color: #eee;
+    background-color: #1F2833;
     padding: 0.5rem;
     height: 3.5rem;
+}
+
+.Header img {
+    height: 2.5rem;
 }
 
 .Header .btn-toolbar {
@@ -10,15 +14,78 @@
     justify-content: space-between;
 }
 
+.Header .btn {
+    background-color: #116466;
+    color: #66FCF1;
+    border-color: #116466;
+}
+
+.Header .btn:hover {
+    border-color: #802BB1 !important;
+    background-color : #802BB1 !important;
+    color: #152833 !important;
+}
+
 .Header .active {
+    background-color: #66FCF1 !important;
+    color: #116466 !important;
+    border-color: #66FCF1 !important;
     box-shadow: none !important;
     user-select: none !important;
 }
 
 .Header .search-bar {
-    flex-basis: 60%;
+    flex-basis: 45%;
 }
 
 .Header .misc-buttons {
     margin-left: 0.5rem;
+}
+
+.Header a {
+    user-select: none;
+    outline: none;
+    text-decoration: none;
+}
+
+.Header a:hover {
+    user-select: none;
+    outline: none;
+    text-decoration: none;
+}
+
+.Header input {
+    margin-bottom: 1rem;
+    width: 70%;
+    background-color: #66FCF1;
+    color: #1F2833;
+    outline: none !important;
+    user-select: none !important;
+    box-shadow: none !important;
+}
+
+.Header input:focus {
+    border-color: #66FCF1;
+    background-color: #66FCF1;
+    color: #1F2833;
+    outline: none !important;
+    user-select: none !important;
+    box-shadow: none !important;
+}
+
+.Header select {
+    background-color: #116466;
+    color: #66FCF1;
+    border-color: #116466;
+    outline: none;
+}
+
+.Header .option {
+    user-select: none;
+    outline: none;
+    box-shadow: 0 0 10px 100px #fff inset;
+}
+
+.Header option:hover {
+    background-color: #802BB1 !important;
 }

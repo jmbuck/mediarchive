@@ -88,21 +88,21 @@ class Book extends Component {
           <div className="optional">
               <div className="start-date">
               Start date: 
-              <a onClick={() => {
+              &nbsp;<a onClick={() => {
                   document.querySelector('.optional .start').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="start" name="start_date" defaultValue={!this.props.search ? book.start_date : null} max={this.state.today}/>
+              <input type="date" className="form-control start" name="start_date" defaultValue={!this.props.search ? book.start_date : null} max={this.state.today}/>
               </div>
               <div className="end-date">
               End date: 
-              <a onClick={() => {
+              &nbsp;<a onClick={() => {
                   document.querySelector('.optional .end').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="end" name="end_date" defaultValue={!this.props.search ? book.end_date : null}max={this.state.today}/>
+              <input type="date" className="form-control end" name="end_date" defaultValue={!this.props.search ? book.end_date : null}max={this.state.today}/>
               </div>
-                 <select defaultValue={!this.props.search ? book.score ? book.score : "" : ""} name="score">
+                 <select className="form-control" defaultValue={!this.props.search ? book.score ? book.score : "" : ""} name="score">
                   <option value="">-- Score --</option>
                   <option value="10">10</option>
                   <option value="9">9</option>
@@ -193,49 +193,55 @@ class Book extends Component {
     return (
       <div>
         <div className="white-content">
-          {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
-            path 
-            ? <img src={path} alt="book cover" />
-            : <img src={noCover} alt="TV show poster" />
-          }
-          <Route exact path={this.state.infoPath} render={(navProps) => {
-            return this.renderBookInfo(book);
-          }}/>
-
-          <Route path={this.state.formPath} render={(navProps) => {
-            return this.renderBookForm(book);
-          }}/>
-
-          <button className="btn btn-primary" 
-            onClick={() => {
-              if(this.state.onForm) {
-                this.props.history.push(this.state.infoPath)
-              } else {
-                this.props.history.push(this.state.formPath)
-              }
-              this.setState({onForm: !this.state.onForm}, () => {
-                if(this.props.search) this.props.displayMessage('', false)
-               })
-            }}
-          >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
-        
-          {!this.props.search && <button className="btn btn-primary" 
-            onClick={() => { 
-              if(list === 'all') {
-                if(this.props.books['completed'] && this.props.books['completed'][`book-${book.id}`]) list = 'completed'
-                if(this.props.books['current'] && this.props.books['current'][`book-${book.id}`]) list = 'current'
-                if(this.props.books['planning'] && this.props.books['planning'][`book-${book.id}`]) list = 'planning'
-              }
-              this.props.deleteMedia('books', list, book, this.props.update)
-            }}
-          >Delete</button>}
-          
-          <button className="btn btn-primary" 
-            onClick={() => {
-              if(this.props.search) this.props.displayMessage('', false)
-              this.props.history.push(this.state.listPath)}
+          <div className="main-content">
+            <div className="image">
+            {/*Displays book cover. If cover does not exist, show "poster does not exist" image*/
+              path 
+              ? <img src={path} alt="book cover" />
+              : <img src={noCover} alt="TV show poster" />
             }
-          >Close</button>
+            </div>
+            <Route exact path={this.state.infoPath} render={(navProps) => {
+              return this.renderBookInfo(book);
+            }}/>
+
+            <Route path={this.state.formPath} render={(navProps) => {
+              return this.renderBookForm(book);
+            }}/>
+          </div>
+
+          <div className="btns btn-group">
+            <button className="btn btn-primary" 
+              onClick={() => {
+                if(this.state.onForm) {
+                  this.props.history.push(this.state.infoPath)
+                } else {
+                  this.props.history.push(this.state.formPath)
+                }
+                this.setState({onForm: !this.state.onForm}, () => {
+                  if(this.props.search) this.props.displayMessage('', false)
+                })
+              }}
+            >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
+          
+            {!this.props.search && <button className="btn btn-primary" 
+              onClick={() => { 
+                if(list === 'all') {
+                  if(this.props.books['completed'] && this.props.books['completed'][`book-${book.id}`]) list = 'completed'
+                  if(this.props.books['current'] && this.props.books['current'][`book-${book.id}`]) list = 'current'
+                  if(this.props.books['planning'] && this.props.books['planning'][`book-${book.id}`]) list = 'planning'
+                }
+                this.props.deleteMedia('books', list, book, this.props.update)
+              }}
+            >Delete</button>}
+            
+            <button className="btn btn-primary" 
+              onClick={() => {
+                if(this.props.search) this.props.displayMessage('', false)
+                this.props.history.push(this.state.listPath)}
+              }
+            >Close</button>
+          </div>
 
         </div>
 
@@ -281,7 +287,7 @@ class Book extends Component {
             }
           </div>
         </Link>
-        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+        {this.props.search && <button className="quick-add btn btn-primary" type="button" onClick={() => {
               this.quickAdd(book)
             }
         }>Quick add</button>}

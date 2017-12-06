@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import '../css/SignIn.css'
 
+import '../css/SignIn.css'
+import logo from '../img/logo.png'
 class SignIn extends Component {
 
   handleSubmit = (ev) => {
@@ -12,12 +13,14 @@ class SignIn extends Component {
     return (
         <div className="SignIn">
             <div className="main-content">
-                <h1 className="title">Mediarchive</h1>
+                <img src={logo} alt="Mediarchive" />
                 <form className="sign-in" onSubmit={this.handleSubmit}>
-                    Username: <input type="text" name="username" />
-                    Password: <input type="password" name="password" />
-                    <button className="btn btn-primary" type="submit">Sign In</button>
-                    <button className="btn btn-primary" type="button" onClick={() => {this.props.history.push('/sign-up')}}>Sign Up</button>
+                    <input type="text" placeholder="Username" className="form-control" name="username" />
+                    <input type="password" placeholder="Password" className="form-control" name="password" />
+                    <div className="buttons btn-group mr-2" role="group">
+                        <button className="btn btn-primary sign-in-button" type="submit">Sign In</button>
+                        <button className="btn btn-primary sign-up-button" type="button" onClick={() => {this.props.history.push('/sign-up')}}>Sign Up</button>
+                    </div>
                 </form>
             </div>    
         </div>               

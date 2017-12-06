@@ -13,3 +13,65 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.Show .white-content img {
+    width: 185px;
+    height: 264px;
+}
+
+.Show .white-content .show-info {
+    text-overflow: wrap;
+    overflow-y: auto;
+    padding: 1rem 4rem 0 1rem; 
+}
+
+.Show .white-content .ShowForm {
+    text-overflow: wrap;
+    overflow-y: auto;
+    padding: 1rem 4rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Show .white-content .ShowForm input,
+.Show .white-content .ShowForm select {
+    color: #116466 !important;
+    box-shadow: none !important;
+    user-select: none !important;
+    margin-bottom: 1rem;
+}
+
+.Show .white-content .ShowForm .btn {
+    width: 60%;
+}
+
+.Show .white-content .ShowForm a {
+    color: #802BB1;
+}
+
+.Show .white-content .ShowForm a:hover {
+    color: #116466;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.Show .main-content {
+    display: flex;
+    flex-grow: 1;
+}
+
+.Show .btn {
+    box-shadow: none !important;
+    height: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.Show .ShowForm .fields {
+    display: flex;
+}
+
+.Show .ShowForm .dates {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}

@@ -19,7 +19,7 @@ class Main extends Component {
             <Route path="/movies/:list" render={(navProps) => <List media="movies" {...this.props} {...navProps} />}/>
             <Route path="/tv/:list" render={(navProps) => <List media="tv" {...this.props} {...navProps} />}/>
             <Route path="/books/:list" render={(navProps) => <List media="books" {...this.props} {...navProps} />}/>            
-            <Route path="/" render={(navProps) => <Stats {...this.props} />}/>
+            <Route path="/stats" render={(navProps) => <Stats {...this.props} />}/>
         </Switch>
         <Footer />
       </div>
