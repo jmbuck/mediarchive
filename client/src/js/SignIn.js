@@ -17,6 +17,7 @@ class SignIn extends Component {
                     Username: <input type="text" name="username" />
                     Password: <input type="password" name="password" />
                     <button className="btn btn-primary" type="submit">Sign In</button>
+                    <button className="btn btn-primary" type="button" onClick={() => {this.props.history.push('/sign-up')}}>Sign Up</button>
                 </form>
             </div>    
         </div>               

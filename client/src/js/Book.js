@@ -28,12 +28,32 @@ class Book extends Component {
     this.fetchBookInfo(this.state.book)
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if(this.props.book !== nextProps.book) {
+      const book = {...this.state.book}
+      book.score = nextProps.book.score
+      book.category = nextProps.book.category
+      book.start_date = nextProps.book.start_date
+      book.end_date = nextProps.book.end_date
+
+      this.setState({book})
+    }
+  }
+
   fetchBookInfo = (book, callback) => {
     fetch(`https://www.googleapis.com/books/v1/volumes/${book.id}?key=${booksKey}`)
     .then(response => response.json())
     .then(detailedBook => {
+      if(!this.props.search) {
+        detailedBook.score = book.score
+        detailedBook.start_date = book.start_date
+        detailedBook.end_date = book.end_date
+        detailedBook.page_count = book.page_count
+        detailedBook.path = book.path
+        detailedBook.category = book.category
+      }
       this.setState({ 
-        book: detailedBook,  
+        book: detailedBook ? detailedBook : book,  
         fetched: true, 
       }, () => {
         if(callback) callback(detailedBook)
@@ -45,7 +65,7 @@ class Book extends Component {
     if(!this.state.fetched) {
       this.fetchBookInfo(book, this.quickAdd)
     } else {
-      const message = this.props.addBook('completed', '', '', 0, book)
+      const message = this.props.addBook('completed', '', '', 0, false, book)
       this.setState({onForm: false})
       this.props.displayMessage(message, true)
     }
@@ -55,15 +75,15 @@ class Book extends Component {
    return (
     <form className="book-form" onSubmit={(ev) => {
       ev.preventDefault();
-      const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, book)
+      const message = this.props.addBook(ev.target.category.value, ev.target.start_date.value, ev.target.end_date.value, ev.target.score.value, this.props.search ? false : true, book)
       if(this.props.search) this.props.displayMessage(message, true)
       this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
     }}>
       <div className="fields">
           <div className="category">
-              <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
-              <input type="radio" name="category" value="current" defaultChecked={false}/>Reading<br/>
-              <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Read<br/>
+              <input type="radio" name="category" value="current" defaultChecked={this.props.search ? false : book.category === 'current'}/>Reading<br/>
+              <input type="radio" name="category" value="completed" defaultChecked={this.props.search ? true : book.category === 'completed'}/>Completed<br/>
+              <input type="radio" name="category" value="planning" defaultChecked={this.props.search ? false : book.category === 'planning'}/>Plan to Read<br/>
           </div>
           <div className="optional">
               <div className="start-date">
@@ -72,7 +92,7 @@ class Book extends Component {
                   document.querySelector('.optional .start').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="start" name="start_date" max={this.state.today}/>
+              <input type="date" className="start" name="start_date" defaultValue={!this.props.search ? book.start_date : null} max={this.state.today}/>
               </div>
               <div className="end-date">
               End date: 
@@ -80,9 +100,9 @@ class Book extends Component {
                   document.querySelector('.optional .end').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="end" name="end_date" max={this.state.today}/>
+              <input type="date" className="end" name="end_date" defaultValue={!this.props.search ? book.end_date : null}max={this.state.today}/>
               </div>
-                 <select name="score">
+                 <select defaultValue={!this.props.search ? book.score ? book.score : "" : ""} name="score">
                   <option value="">-- Score --</option>
                   <option value="10">10</option>
                   <option value="9">9</option>
@@ -103,14 +123,34 @@ class Book extends Component {
   }
 
   renderBookInfo = (book) => {
+    const start_date = new Date(book.start_date)
+    const end_date = new Date(book.end_date)
+    start_date.setDate(start_date.getDate()+1)
+    end_date.setDate(end_date.getDate()+1)
+    const options = {
+        month: "long",
+        year: "numeric",
+        day: "numeric",
+    }
     return (
       <div className="book-info">
         {
-        this.state.displayMessage 
-        ? <div className="message">{this.state.message}</div>
-        : <div className="message"></div>
+        !this.props.search 
+        ? (<div>
+          {
+          book.start_date
+          ? <div className="start-date">Start Date: {start_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="start-date">Start Date: -</div>
+          }
+          {
+          book.end_date
+          ? <div className="end-date">End Date: {end_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="end-date">End Date: -</div>
+          }
+          <br />
+        </div>)
+        : null
         }
-
         {
         book.volumeInfo.authors && book.volumeInfo.authors.length > 0
         ? (<div className="authors">{book.volumeInfo.authors.length === 1 ? 'Author' : 'Authors'}:&nbsp;
@@ -149,7 +189,7 @@ class Book extends Component {
   }
 
   renderBook = (navProps, book, query, page, list) => {
-    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo || !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
     return (
       <div>
         <div className="white-content">
@@ -212,7 +252,7 @@ class Book extends Component {
     const page = this.props.match.params.page
     const list = this.props.match.params.list
     const book = {...this.state.book}
-    const path = book.path ? book.path : !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
+    const path = book.path ? book.path : !book.volumeInfo || !book.volumeInfo.imageLinks ? null : book.volumeInfo.imageLinks.thumbnail ? book.volumeInfo.imageLinks.thumbnail : null
 
     return (
       <li className="Book">
@@ -233,6 +273,11 @@ class Book extends Component {
               path 
               ? <img src={path} alt="book cover" />
               : <img src={noCover} alt="book cover" />
+            }
+            {
+              !this.props.search 
+              ? <div className="score">Score: {book.score ? book.score : '-'}</div>
+              : <div className="score"></div>
             }
           </div>
         </Link>

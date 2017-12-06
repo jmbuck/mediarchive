@@ -28,10 +28,25 @@ class Movie extends Component {
     this.fetchMovieInfo(this.state.movie)
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if(this.props.movie !== nextProps.movie) {
+      const movie = {...this.state.movie}
+      movie.score = nextProps.movie.score
+      movie.watched_date = nextProps.movie.watched_date
+      movie.category = nextProps.movie.category
+      this.setState({movie})
+    }
+  }
+
   fetchMovieInfo = (movie, callback) => {
     fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDBKey}&append_to_response=credits`)
       .then(response => response.json())
       .then(detailedMovie => {
+        if(!this.props.search) {
+          detailedMovie.score = movie.score
+          detailedMovie.watched_date = movie.watched_date
+          detailedMovie.category = movie.category
+        }
         this.setState({ 
           movie: detailedMovie,  
           fetched: true, 
@@ -45,7 +60,7 @@ class Movie extends Component {
     if(!this.state.fetched) {
       this.fetchMovieInfo(movie, this.quickAdd)
     } else {
-      const message = this.props.addMovie('completed', '', 0, movie)
+      const message = this.props.addMovie('completed', '', 0, false, movie)
       this.setState({onForm: false})
       this.props.displayMessage(message, true)
     }
@@ -59,8 +74,24 @@ class Movie extends Component {
         year: "numeric",
         day: "numeric",
     }
+
+    const watched_date = new Date(movie.watched_date)
+    watched_date.setDate(watched_date.getDate()+1)
     return (
       <div className="movie-info">
+        {
+        !this.props.search 
+        ? (<div>
+          {
+          movie.watched_date
+          ? <div className="watched-date">Watched Date: {watched_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="watched-date">Watched Date: -</div>
+          }
+          <br />
+        </div>)
+        : null
+        }
+      
         {
         movie.overview 
         ? <div className="synopsis">Synopsis: {movie.overview}</div>
@@ -103,19 +134,18 @@ class Movie extends Component {
   }
 
   //TODO: Default values on edit form
-  //EDIT
   renderMovieForm = (movie) => {
     return (
         <form className="MovieForm" onSubmit={(ev) => {
             ev.preventDefault();
-            const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, movie)
+            const message = this.props.addMovie(ev.target.category.value, ev.target.date.value, ev.target.score.value, this.props.search ? false : true, movie)
             if(this.props.search) this.props.displayMessage(message, true)
             this.setState({onForm: false}, () => {this.props.history.push(this.state.listPath)})
         }}>
             <div className="fields">
                 <div className="category">
-                    <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
-                    <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Watch<br/>
+                    <input type="radio" name="category" value="completed" defaultChecked={this.props.search ? true : movie.category === 'completed'}/>Completed<br/>
+                    <input type="radio" name="category" value="planning" defaultChecked={this.props.search ? false : movie.category === 'planning'}/>Plan to Watch<br/>
                 </div>
                 <div className="optional">
                     <div className="date">
@@ -124,9 +154,9 @@ class Movie extends Component {
                         document.querySelector('.optional input').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" name="date" max={this.state.today}/>
+                    <input type="date" name="date" max={this.state.today} defaultValue={!this.props.search ? movie.watched_date : null}/>
                     </div>
-                    <select name="score">
+                    <select defaultValue={!this.props.search ? movie.score ? movie.score : "" : ""} name="score">
                         <option value="">-- Score --</option>
                         <option value="10">10</option>
                         <option value="9">9</option>
@@ -231,6 +261,12 @@ class Movie extends Component {
               ? <img src={path} alt="movie poster" />
               : <img src={noPoster} alt="movie poster" />
             }
+            {
+              !this.props.search 
+              ? <div className="score">Score: {movie.score ? movie.score : '-'}</div>
+              : <div className="score"></div>
+            }
+            
           </div>
         </Link>
         {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
