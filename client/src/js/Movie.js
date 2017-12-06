@@ -150,13 +150,13 @@ class Movie extends Component {
                 <div className="optional">
                     <div className="date">
                     Date watched: 
-                    <a onClick={() => {
+                    &nbsp;<a onClick={() => {
                         document.querySelector('.optional input').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" name="date" max={this.state.today} defaultValue={!this.props.search ? movie.watched_date : null}/>
+                    <input type="date" name="date" className="form-control" max={this.state.today} defaultValue={!this.props.search ? movie.watched_date : null}/>
                     </div>
-                    <select defaultValue={!this.props.search ? movie.score ? movie.score : "" : ""} name="score">
+                    <select defaultValue={!this.props.search ? movie.score ? movie.score : "" : ""} className="form-control" name="score">
                         <option value="">-- Score --</option>
                         <option value="10">10</option>
                         <option value="9">9</option>
@@ -181,48 +181,52 @@ class Movie extends Component {
     return (
       <div>
         <div className="white-content">
-          {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
-            movie.poster_path 
-            ? <img src={path} alt="movie poster" />
-            : <img src={noPoster} alt="movie poster" />
-          }
-          <Route exact path={this.state.infoPath} render={(navProps) => {
-            return this.renderMovieInfo(movie);
-          }}/>
+          <div className="main-content">
+            {/*Displays movie poster. If poster does not exist, show "poster does not exist" image*/
+              movie.poster_path 
+              ? <img src={path} alt="movie poster" />
+              : <img src={noPoster} alt="movie poster" />
+            }
+            <Route exact path={this.state.infoPath} render={(navProps) => {
+              return this.renderMovieInfo(movie);
+            }}/>
 
-          <Route path={this.state.formPath} render={(navProps) => {
-            return this.renderMovieForm(movie);
-          }}/>
+            <Route path={this.state.formPath} render={(navProps) => {
+              return this.renderMovieForm(movie);
+            }}/>
+          </div>
 
-          <button className="btn btn-primary" 
-            onClick={() => {
-              if(this.state.onForm) {
-                this.props.history.push(this.state.infoPath)
-              } else {
-                this.props.history.push(this.state.formPath)
-              }
-              this.setState({onForm: !this.state.onForm}, () => {
+          <div className="btns btn-group mr-2">
+            <button className="btn btn-primary" 
+              onClick={() => {
+                if(this.state.onForm) {
+                  this.props.history.push(this.state.infoPath)
+                } else {
+                  this.props.history.push(this.state.formPath)
+                }
+                this.setState({onForm: !this.state.onForm}, () => {
+                  if(this.props.search) this.props.displayMessage('', false)
+                })
+              }}
+            >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
+
+            {!this.props.search && <button className="btn btn-primary" 
+              onClick={() => { 
+                if(list === 'all') {
+                  if(this.props.movies['completed'] && this.props.movies['completed'][`movie-${movie.id}`]) list = 'completed'
+                  if(this.props.movies['planning'] && this.props.movies['planning'][`movie-${movie.id}`]) list = 'planning'
+                }
+                this.props.deleteMedia('movies', list, movie, this.props.update)
+              }}
+            >Delete</button>}
+
+            <button className="btn btn-primary" 
+              onClick={() => { 
                 if(this.props.search) this.props.displayMessage('', false)
-              })
-            }}
-          >{this.state.onForm ? 'Info' : this.props.search ? 'Add' : 'Edit'}</button>
-
-          {!this.props.search && <button className="btn btn-primary" 
-            onClick={() => { 
-              if(list === 'all') {
-                if(this.props.movies['completed'] && this.props.movies['completed'][`movie-${movie.id}`]) list = 'completed'
-                if(this.props.movies['planning'] && this.props.movies['planning'][`movie-${movie.id}`]) list = 'planning'
-              }
-              this.props.deleteMedia('movies', list, movie, this.props.update)
-            }}
-          >Delete</button>}
-
-          <button className="btn btn-primary" 
-            onClick={() => { 
-              if(this.props.search) this.props.displayMessage('', false)
-              this.props.history.push(this.state.listPath)
-            }}
-          >Close</button>
+                this.props.history.push(this.state.listPath)
+              }}
+            >Close</button>
+          </div>
         </div>
 
         <div className="black-overlay" onClick={() => { 
@@ -269,7 +273,7 @@ class Movie extends Component {
             
           </div>
         </Link>
-        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+        {this.props.search && <button className="quick-add btn btn-primary" type="button" onClick={() => {
               this.quickAdd(movie)
             }
         }>Quick add</button>}

@@ -184,7 +184,7 @@ class Search extends Component {
             if(page > 1) {
               return (
                 <Link to={`/search/${media}/${query}/${parseInt(page, 10)-1}`}>
-                    <button className="btn btn-primary" type="button"><i className="fa fa-arrow-left"></i></button>
+                    <button className="left-btn btn btn-primary" type="button"><i className="fa fa-arrow-left"></i></button>
                 </Link>
               )
           }})()}
@@ -192,11 +192,11 @@ class Search extends Component {
             if(page < this.state.totalPages) {
               return (
                 <Link to={`/search/${media}/${query}/${parseInt(page, 10)+1}`}>
-                    <button className="btn btn-primary" type="button"><i className="fa fa-arrow-right"></i></button>
+                    <button className="right-btn btn btn-primary" type="button"><i className="fa fa-arrow-right"></i></button>
                 </Link>
               )
           }})()}
-          <span className="page-number">Page {page} of {this.state.totalPages}</span>
+          <span className="page-number">&nbsp;Page {page} of {this.state.totalPages}</span>
         </div>
       </div>
     );

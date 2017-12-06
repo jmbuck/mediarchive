@@ -54,42 +54,51 @@ class List extends Component {
   renderList = (list, media) => {
     if(media === 'movies') {
       return this.state.movies[list] && Object.keys(this.state.movies[list]).length > 0
-      ? <ul className="media-list">{Object.keys(this.state.movies[list]).map((id, i) => 
-          <Movie 
-            key={id}
-            index={i}
-            movie={this.state.movies[list][id]}
-            search={false}
-            update={this.update}
-            {...this.props}
-          />)}
-        </ul>
+      ? (<div className="list-container">
+          <h1>{this.getListName(list, media, true)}</h1>
+          <ul className="media-list">{Object.keys(this.state.movies[list]).map((id, i) => 
+            <Movie 
+              key={id}
+              index={i}
+              movie={this.state.movies[list][id]}
+              search={false}
+              update={this.update}
+              {...this.props}
+            />)}
+          </ul>
+        </div>)
       : this.props.fetchedMovies ? <div>Your {this.getListName(list, media)} list is empty</div> : <div>Fetching list...</div>
     } else if(media === 'tv') {
       return this.state.shows[list] && Object.keys(this.state.shows[list]).length > 0
-      ? <ul className="media-list">{Object.keys(this.state.shows[list]).map((id, i) => 
-          <Show 
-            key={id}
-            index={i}
-            show={this.state.shows[list][id]}
-            search={false}
-            update={this.update}
-            {...this.props}
-          />)}
-        </ul>
+      ? (<div className="list-container">
+            <h1>{this.getListName(list, media, true)}</h1>
+            <ul className="media-list">{Object.keys(this.state.shows[list]).map((id, i) => 
+              <Show 
+                key={id}
+                index={i}
+                show={this.state.shows[list][id]}
+                search={false}
+                update={this.update}
+                {...this.props}
+              />)}
+            </ul>
+        </div>)
       : this.props.fetchedShows ? <div>Your {this.getListName(list, media)} list is empty</div> : <div>Fetching list...</div>
     } else if(media === 'books') {
       return this.state.books[list] && Object.keys(this.state.books[list]).length > 0
-      ? <ul className="media-list">{Object.keys(this.state.books[list]).map((id, i) => 
-          <Book 
-            key={id}
-            index={i}
-            book={this.state.books[list][id]}
-            search={false}
-            update={this.update}
-            {...this.props}
-          />)}
-        </ul>
+      ? (<div className="list-container">
+          <h1>{this.getListName(list, media, true)}</h1>
+          <ul className="media-list">{Object.keys(this.state.books[list]).map((id, i) => 
+            <Book 
+              key={id}
+              index={i}
+              book={this.state.books[list][id]}
+              search={false}
+              update={this.update}
+              {...this.props}
+            />)}
+          </ul>
+        </div>)
       : this.props.fetchedBooks ? <div>Your {this.getListName(list, media)} list is empty</div> : <div>Fetching list...</div>
     }
   }

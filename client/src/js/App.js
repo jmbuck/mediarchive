@@ -392,13 +392,14 @@ class App extends Component {
           <Route path="/sign-in" render={(navProps) =>
             !this.signedIn() 
             ? <SignIn signIn={this.signIn} {...navProps} />
-            : <Redirect to="/"/>
+            : <Redirect to="/stats"/>
           }/>
           <Route path="/sign-up" render={(navProps) =>
             !this.signedIn() 
             ? <SignUp signUp={this.signUp} {...navProps} />
-            : <Redirect to="/"/>
+            : <Redirect to="/stats"/>
           }/>
+          <Route exact path="/" render={() => <Redirect to="/stats"/>}/>
           <Route path="/" render={() =>
               this.signedIn() || !this.state.ready
               ? <Main 

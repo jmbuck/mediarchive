@@ -1,5 +1,6 @@
 .Footer {
-    background-color: #eee;
+    background-color: #1F2833;
+    color: #66FCF1;
     padding: 0.5rem;
     bottom: 0;
     position: fixed;
@@ -7,6 +8,15 @@
     display: flex;
     justify-content: space-around;
     height: 2.5rem;
+}
+
+.Footer a {
+    color: #802BB1;
+}
+
+.Footer a:hover {
+    color: #66FCF1;
+    text-decoration: underline;
 }
 
 .Footer span {

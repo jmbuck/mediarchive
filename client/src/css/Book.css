@@ -13,3 +13,68 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.Book .white-content .main-content .image {
+    width: 185px;
+    height: 264px;
+}
+.Book .white-content img {
+    width: 185px;
+    height: 264px;
+}
+
+.Book .white-content .book-info {
+    text-overflow: wrap;
+    overflow-y: auto;
+    padding: 1rem 4rem 0 1rem; 
+}
+
+.Book .white-content .book-form {
+    text-overflow: wrap;
+    overflow-y: auto;
+    padding: 1rem 4rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Book .white-content .book-form input,
+.Book .white-content .book-form select {
+    color: #116466 !important;
+    box-shadow: none !important;
+    user-select: none !important;
+    margin-bottom: 1rem;
+}
+
+.Book .white-content .book-form .btn {
+    width: 60%;
+}
+
+.Book .white-content .book-form a {
+    color: #802BB1;
+}
+
+.Book .white-content .book-form a:hover {
+    color: #116466;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.Book .main-content {
+    display: flex;
+    flex-grow: 1;
+}
+
+.Book .btn {
+    box-shadow: none !important;
+    height: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.Book .book-form .optional {
+    margin-left: 1rem;
+}
+
+.Book .book-form .fields {
+    display: flex;
+}

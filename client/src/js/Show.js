@@ -135,38 +135,24 @@ class Show extends Component {
                     <input type="radio" name="category" value="completed" defaultChecked={this.props.search ? true : show.category === 'completed'} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
                     <input type="radio" name="category" value="planning" defaultChecked={this.props.search ? false : show.category === 'planning'} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
                 </div>
-                <div className="optional">
-                    <div className="start-date">
-                    Start date: 
-                    <a onClick={() => {
-                        document.querySelector('.optional .start').value = this.state.today
-                        }}>Insert Today
-                    </a>
-                    <input type="date" className="start" name="start_date" max={this.state.today} defaultValue={!this.props.search ? show.start_date : null}/>
-                    </div>
-                    <div className="end-date">
-                    End date: 
-                    <a onClick={() => {
-                        document.querySelector('.optional .end').value = this.state.today
-                        }}>Insert Today
-                    </a>
-                    <input type="date" className="end" name="end_date" max={this.state.today} defaultValue={!this.props.search ? show.end_date : null}/>
-                    </div>
-
-                    {
-                    this.state.watching
-                    ? (<div className="episodes-watched">
-                        Current season:
-                        <input type="number" name="curr_season" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).currSeason : null} min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
-                        Episode in current season:
-                        <input type="number" name="curr_episode" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).episode : null} min="1" max={show.seasons && show.seasons.length > 0 
-                                                                                ? show.seasons.reduce((a, b) => Math.max(a, b.episode_count), 0)
-                                                                                : 100 }/>
-                      </div>)
-                    : <div className="episodes-watched"></div>
-                    }
-                   
-                    <select defaultValue={!this.props.search ? show.score ? show.score : "" : ""} name="score">
+                <div className="dates">
+                  <div className="start-date">
+                  Start date: 
+                  &nbsp;<a onClick={() => {
+                      document.querySelector('.fields .start').value = this.state.today
+                      }}>Insert Today
+                  </a>
+                  <input type="date" className="start form-control" name="start_date" max={this.state.today} defaultValue={!this.props.search ? show.start_date : null}/>
+                  </div>
+                  <div className="end-date">
+                  End date: 
+                  &nbsp;<a onClick={() => {
+                      document.querySelector('.fields .end').value = this.state.today
+                      }}>Insert Today
+                  </a>
+                  <input type="date" className="end form-control" name="end_date" max={this.state.today} defaultValue={!this.props.search ? show.end_date : null}/>
+                  </div>
+                  <select className="form-control" defaultValue={!this.props.search ? show.score ? show.score : "" : ""} name="score">
                         <option value="">-- Score --</option>
                         <option value="10">10</option>
                         <option value="9">9</option>
@@ -178,9 +164,23 @@ class Show extends Component {
                         <option value="3">3</option>
                         <option value="2">2</option>
                         <option value="1">1</option>
-                    </select>
+                  </select>
                 </div>
-            </div>
+                <div className="extra">
+                    {
+                    this.state.watching
+                    ? (<div className="episodes-watched">
+                        Current season:
+                        <input type="number" className="form-control" name="curr_season" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).currSeason : null} min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
+                        Episode in current season:
+                        <input type="number" className="form-control" name="curr_episode" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).episode : null} min="1" max={show.seasons && show.seasons.length > 0 
+                                                                                ? show.seasons.reduce((a, b) => Math.max(a, b.episode_count), 0)
+                                                                                : 100 }/>
+                      </div>)
+                    : <div className="episodes-watched"></div>
+                    }
+                  </div>
+                </div>
             <button className="btn btn-primary" type="submit">{this.props.search ? 'Add' : 'Confirm'}</button>
         </form>
     )
@@ -283,19 +283,22 @@ class Show extends Component {
     return (
       <div>
         <div className="white-content">
-          {/*Displays tv show poster. If poster does not exist, show "poster does not exist" image*/
-            show.poster_path 
-            ? <img src={path} alt="TV show poster" />
-            : <img src={noPoster} alt="TV show poster" />
-          }
-          <Route exact path={this.state.infoPath} render={(navProps) => {
-            return this.renderShowInfo(show);
-          }}/>
+          <div className="main-content">
+            {/*Displays tv show poster. If poster does not exist, show "poster does not exist" image*/
+              show.poster_path 
+              ? <img src={path} alt="TV show poster" />
+              : <img src={noPoster} alt="TV show poster" />
+            }
+            <Route exact path={this.state.infoPath} render={(navProps) => {
+              return this.renderShowInfo(show);
+            }}/>
 
-          <Route path={this.state.formPath} render={(navProps) => {
-            return this.renderShowForm(show);
-          }}/>
+            <Route path={this.state.formPath} render={(navProps) => {
+              return this.renderShowForm(show);
+            }}/>
+          </div>
 
+          <div className="btns btn-group mr-2">
           <button className="btn btn-primary" 
             onClick={() => {
               if(this.state.onForm) {
@@ -326,6 +329,7 @@ class Show extends Component {
               this.props.history.push(this.state.listPath)
             }}
           >Close</button>
+          </div>
 
         </div>
 
@@ -375,7 +379,7 @@ class Show extends Component {
             }
           </div>
         </Link>
-        {this.props.search && <button className="btn btn-primary" type="button" onClick={() => {
+        {this.props.search && <button className="quick-add btn btn-primary" type="button" onClick={() => {
               this.quickAdd(show)
             }
         }>Quick add</button>}
