@@ -168,7 +168,7 @@ class App extends Component {
   signOut = () => {
     localStorage.removeItem('uid')
     localStorage.removeItem('user')
-    this.setState({user: null, auth: null, signedIn: false, ready: false}, () => {
+    this.setState({user: null, auth: null, signedIn: false, ready: false, movies: {}, books: {}, shows: {}}, () => {
       this.props.history.push('/sign-in')
     })
   }
@@ -234,7 +234,7 @@ class App extends Component {
     return false;
   }
 
-  addMovie = (category, date, score, edit, movie) => {
+  addMovie = (category, date, score, edit, movie, update) => {
     const movies = {...this.state.movies}
     if(!movies[category]) {
       movies[category] = {}
@@ -268,7 +268,7 @@ class App extends Component {
         },
         body: JSON.stringify(movies[category][`movie-${movie.id}`])
       })
-
+      if(update) update()
       message = `${movie.title} successfully added to list!`
     }
     return message;

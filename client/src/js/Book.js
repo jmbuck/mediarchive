@@ -28,6 +28,18 @@ class Book extends Component {
     this.fetchBookInfo(this.state.book)
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if(this.props.book !== nextProps.book) {
+      const book = {...this.state.book}
+      book.score = nextProps.book.score
+      book.category = nextProps.book.category
+      book.start_date = nextProps.book.start_date
+      book.end_date = nextProps.book.end_date
+
+      this.setState({book})
+    }
+  }
+
   fetchBookInfo = (book, callback) => {
     fetch(`https://www.googleapis.com/books/v1/volumes/${book.id}?key=${booksKey}`)
     .then(response => response.json())
@@ -69,9 +81,9 @@ class Book extends Component {
     }}>
       <div className="fields">
           <div className="category">
-              <input type="radio" name="category" value="current" defaultChecked={false}/>Reading<br/>
-              <input type="radio" name="category" value="completed" defaultChecked={true}/>Completed<br/>
-              <input type="radio" name="category" value="planning" defaultChecked={false}/>Plan to Read<br/>
+              <input type="radio" name="category" value="current" defaultChecked={this.props.search ? false : book.category === 'current'}/>Reading<br/>
+              <input type="radio" name="category" value="completed" defaultChecked={this.props.search ? true : book.category === 'completed'}/>Completed<br/>
+              <input type="radio" name="category" value="planning" defaultChecked={this.props.search ? false : book.category === 'planning'}/>Plan to Read<br/>
           </div>
           <div className="optional">
               <div className="start-date">
@@ -80,7 +92,7 @@ class Book extends Component {
                   document.querySelector('.optional .start').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="start" name="start_date" max={this.state.today}/>
+              <input type="date" className="start" name="start_date" defaultValue={!this.props.search ? book.start_date : null} max={this.state.today}/>
               </div>
               <div className="end-date">
               End date: 
@@ -88,9 +100,9 @@ class Book extends Component {
                   document.querySelector('.optional .end').value = this.state.today
                   }}>Insert Today
               </a>
-              <input type="date" className="end" name="end_date" max={this.state.today}/>
+              <input type="date" className="end" name="end_date" defaultValue={!this.props.search ? book.end_date : null}max={this.state.today}/>
               </div>
-                 <select name="score">
+                 <select defaultValue={!this.props.search ? book.score ? book.score : "" : ""} name="score">
                   <option value="">-- Score --</option>
                   <option value="10">10</option>
                   <option value="9">9</option>
@@ -111,14 +123,34 @@ class Book extends Component {
   }
 
   renderBookInfo = (book) => {
+    const start_date = new Date(book.start_date)
+    const end_date = new Date(book.end_date)
+    start_date.setDate(start_date.getDate()+1)
+    end_date.setDate(end_date.getDate()+1)
+    const options = {
+        month: "long",
+        year: "numeric",
+        day: "numeric",
+    }
     return (
       <div className="book-info">
         {
-        this.state.displayMessage 
-        ? <div className="message">{this.state.message}</div>
-        : <div className="message"></div>
+        !this.props.search 
+        ? (<div>
+          {
+          book.start_date
+          ? <div className="start-date">Start Date: {start_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="start-date">Start Date: -</div>
+          }
+          {
+          book.end_date
+          ? <div className="end-date">End Date: {end_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="end-date">End Date: -</div>
+          }
+          <br />
+        </div>)
+        : null
         }
-
         {
         book.volumeInfo.authors && book.volumeInfo.authors.length > 0
         ? (<div className="authors">{book.volumeInfo.authors.length === 1 ? 'Author' : 'Authors'}:&nbsp;
@@ -241,6 +273,11 @@ class Book extends Component {
               path 
               ? <img src={path} alt="book cover" />
               : <img src={noCover} alt="book cover" />
+            }
+            {
+              !this.props.search 
+              ? <div className="score">Score: {book.score ? book.score : '-'}</div>
+              : <div className="score"></div>
             }
           </div>
         </Link>

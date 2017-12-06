@@ -21,12 +21,26 @@ class Show extends Component {
       : `/tv/${this.props.match.params.list}/${this.props.show.id}`,
       listPath: this.props.search ? `/search/tv/${this.props.match.params.query}/${this.props.match.params.page}`
       : `/tv/${this.props.match.params.list}`,
-      watching: false
+      watching: this.props.search ? false : this.props.show.category === 'current'
     }
   }
 
   componentDidMount = () => {
     this.fetchShowInfo(this.state.show)
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    if(this.props.show !== nextProps.show) {
+      const show = {...this.state.show}
+      show.score = nextProps.show.score
+      show.category = nextProps.show.category
+      show.start_date = nextProps.show.start_date
+      show.end_date = nextProps.show.end_date
+      show.episodes_watched = nextProps.show.episodes_watched
+      show.seasons_watched = nextProps.seasons_watched
+    
+      this.setState({show})
+    }
   }
 
   fetchShowInfo = (show, callback) => {
@@ -84,6 +98,18 @@ class Show extends Component {
     return episodes
   }
 
+  getCurrEpisodeAndSeason = (show) => {
+    let episodes = show.episodes_watched
+    let currSeason = 1;
+    show.seasons.forEach((season) => {
+      if(season.season_number !== 0 && episodes > season.episode_count) {
+        currSeason++;
+        episodes -= season.episode_count;
+      }
+    })
+    return {currSeason, episode: episodes}
+  }
+
   renderShowForm = (show) => {
     return (
         <form className="ShowForm" onSubmit={(ev) => {
@@ -105,9 +131,9 @@ class Show extends Component {
         }}>
             <div className="fields">
                 <div className="category">
-                    <input type="radio" name="category" className="watching" value="current" defaultChecked={false} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
-                    <input type="radio" name="category" value="completed" defaultChecked={true} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
-                    <input type="radio" name="category" value="planning" defaultChecked={false} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
+                    <input type="radio" name="category" className="watching" value="current" defaultChecked={this.props.search ? false : show.category === 'current'} onChange={() => {this.setState({watching: true})}}/>Watching<br/>
+                    <input type="radio" name="category" value="completed" defaultChecked={this.props.search ? true : show.category === 'completed'} onChange={() => {this.setState({watching: false})}}/>Completed<br/>
+                    <input type="radio" name="category" value="planning" defaultChecked={this.props.search ? false : show.category === 'planning'} onChange={() => {this.setState({watching: false})}}/>Plan to Watch<br/>
                 </div>
                 <div className="optional">
                     <div className="start-date">
@@ -116,7 +142,7 @@ class Show extends Component {
                         document.querySelector('.optional .start').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" className="start" name="start_date" max={this.state.today}/>
+                    <input type="date" className="start" name="start_date" max={this.state.today} defaultValue={!this.props.search ? show.start_date : null}/>
                     </div>
                     <div className="end-date">
                     End date: 
@@ -124,23 +150,23 @@ class Show extends Component {
                         document.querySelector('.optional .end').value = this.state.today
                         }}>Insert Today
                     </a>
-                    <input type="date" className="end" name="end_date" max={this.state.today}/>
+                    <input type="date" className="end" name="end_date" max={this.state.today} defaultValue={!this.props.search ? show.end_date : null}/>
                     </div>
 
                     {
                     this.state.watching
                     ? (<div className="episodes-watched">
                         Current season:
-                        <input type="number" name="curr_season" min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
+                        <input type="number" name="curr_season" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).currSeason : null} min="1" max={show.number_of_seasons ? show.number_of_seasons : 100}/>
                         Episode in current season:
-                        <input type="number" name="curr_episode" min="1" max={show.seasons && show.seasons.length > 0 
+                        <input type="number" name="curr_episode" defaultValue={!this.props.search ? this.getCurrEpisodeAndSeason(show).episode : null} min="1" max={show.seasons && show.seasons.length > 0 
                                                                                 ? show.seasons.reduce((a, b) => Math.max(a, b.episode_count), 0)
                                                                                 : 100 }/>
                       </div>)
                     : <div className="episodes-watched"></div>
                     }
                    
-                    <select name="score">
+                    <select defaultValue={!this.props.search ? show.score ? show.score : "" : ""} name="score">
                         <option value="">-- Score --</option>
                         <option value="10">10</option>
                         <option value="9">9</option>
@@ -161,8 +187,13 @@ class Show extends Component {
   }
 
   renderShowInfo = (show) => {
+    const current = this.getCurrEpisodeAndSeason(show)
     const first_air_date = new Date(show.first_air_date)
+    const start_date = new Date(show.start_date)
+    const end_date = new Date(show.end_date)
     first_air_date.setDate(first_air_date.getDate()+1)
+    start_date.setDate(start_date.getDate()+1)
+    end_date.setDate(end_date.getDate()+1)
     const options = {
         month: "long",
         year: "numeric",
@@ -170,6 +201,34 @@ class Show extends Component {
     }
     return (
       <div className="show-info">
+        {
+        !this.props.search 
+        ? (<div>
+          {
+          show.start_date
+          ? <div className="start-date">Start Date: {start_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="start-date">Start Date: -</div>
+          }
+          {
+          show.end_date
+          ? <div className="end-date">End Date: {end_date.toLocaleDateString("en-US", options)}</div>
+          : <div className="end-date">End Date: -</div>
+          }
+          {
+          current.episode
+          ? <div className="current-episode">Current Episode: {current.episode}</div>
+          : <div className="current-episode">Current Episode: -</div>
+          }
+          {
+          current.currSeason
+          ? <div className="current-season">Current Season: {current.currSeason}</div>
+          : <div className="current-season">Current Season: -</div>
+          }
+          <br />
+        </div>)
+        : null
+        }
+
         {
         show.overview 
         ? <div className="synopsis">Synopsis: {show.overview}</div>
@@ -304,6 +363,15 @@ class Show extends Component {
               show.poster_path 
               ? <img src={path} alt="TV show poster" />
               : <img src={noPoster} alt="TV show poster" />
+            }
+
+            {
+              !this.props.search 
+              ? (<div>
+                  <div className="percent">Percent Completed: {show.episodes_watched && show.number_of_episodes ? ((show.episodes_watched/show.number_of_episodes)*100).toFixed(2) : '-'}%</div>
+                  <div className="score">Score: {show.score ? show.score : '-'}</div>
+                </div>)
+              : <div></div>
             }
           </div>
         </Link>
